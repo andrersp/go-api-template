@@ -3,7 +3,7 @@ package config
 import (
 	"log"
 
-	"github.com/andrersp/go-api-template/internal/domain/user/rdb"
+	userDB "github.com/andrersp/go-api-template/internal/domain/user/database"
 	"gorm.io/driver/sqlite"
 	"gorm.io/gorm"
 )
@@ -72,7 +72,7 @@ func AutoMigrate() error {
 		return err
 	}
 
-	err = db.AutoMigrate(&rdb.User{})
+	err = db.AutoMigrate(&userDB.UserModel{})
 
 	return err
 }

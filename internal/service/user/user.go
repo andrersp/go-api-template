@@ -3,7 +3,7 @@ package service
 import (
 	"github.com/andrersp/go-api-template/internal/config"
 	"github.com/andrersp/go-api-template/internal/domain/user"
-	"github.com/andrersp/go-api-template/internal/domain/user/rdb"
+	"github.com/andrersp/go-api-template/internal/domain/user/database"
 
 	"github.com/google/uuid"
 )
@@ -37,7 +37,7 @@ func ServiceWithRDB() ServiceUserConfiguration {
 			return err
 		}
 
-		rdbUser := rdb.NewRDBUser(conn)
+		rdbUser := database.NewDBUser(conn)
 		us.userRepo = rdbUser
 
 		return nil
