@@ -32,14 +32,22 @@ func TestUserService(t *testing.T) {
 		userID, err := serviceUser.CreateUser(user)
 
 		assert.Equal(t, err, nil)
-		assert.Equal(t, user.GetId(), userID)
+		assert.Equal(t, user.ID, userID)
 
 	})
 
 	t.Run("TestGetUser", func(t *testing.T) {
 
-		_, err := serviceUser.GetUser(user.GetId())
+		_, err := serviceUser.GetUser(user.ID)
 		assert.Equal(t, err, nil)
+
+	})
+
+	t.Run("TestGetAllUsers", func(t *testing.T) {
+
+		users := serviceUser.GetUsers()
+
+		assert.NotEqual(t, len(users), 0)
 
 	})
 

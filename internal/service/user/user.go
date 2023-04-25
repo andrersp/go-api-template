@@ -51,11 +51,15 @@ func (us ServiceUser) CreateUser(user user.User) (userID uuid.UUID, err error) {
 	if err != nil {
 		return uuid.Nil, err
 	}
-	userID = user.GetId()
+	userID = user.ID
 	return
 }
 
 func (us ServiceUser) GetUser(ID uuid.UUID) (user user.User, err error) {
 	return us.userRepo.GetUser(ID)
 
+}
+
+func (us ServiceUser) GetUsers() (users []user.User) {
+	return us.userRepo.GetUsers()
 }

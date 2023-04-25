@@ -40,3 +40,14 @@ func (ru *DBUser) UpdateUser(user user.User) error {
 
 	return nil
 }
+
+func (ru *DBUser) GetUsers() (users []user.User) {
+
+	var dbUsers []UserModel
+	ru.db.Find(&dbUsers)
+
+	for _, user := range dbUsers {
+		users = append(users, user.ToAggregate())
+	}
+	return
+}

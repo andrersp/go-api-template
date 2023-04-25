@@ -18,17 +18,17 @@ func (UserModel) TableName() string {
 
 func NewFromUser(u user.User) UserModel {
 	return UserModel{
-		ID:       u.GetId(),
-		UserName: u.GetUserName(),
-		Email:    u.GetEmail(),
-		Password: u.GetPassword(),
+		ID:       u.ID,
+		UserName: u.UserName,
+		Email:    u.Email,
+		Password: u.Password,
 	}
 }
 
 func (u UserModel) ToAggregate() user.User {
 	user := user.User{}
-	user.SetId(u.ID)
-	user.SetUserName(u.UserName)
-	user.SetEmail(u.Email)
+	user.ID = u.ID
+	user.UserName = u.UserName
+	user.Email = u.Email
 	return user
 }

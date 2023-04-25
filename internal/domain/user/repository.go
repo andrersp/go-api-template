@@ -16,5 +16,6 @@ var (
 type UserRepository interface {
 	CreateUser(User) error
 	GetUser(uuid.UUID) (User, error)
+	GetUsers() []User
 	UpdateUser(User) error
 }
