@@ -13,7 +13,7 @@ var (
 	ErrUserNotFound    = errors.New("user not found")
 )
 
-type UserRepository interface {
+type UserInterface interface {
 	CreateUser(User) error
 	GetUser(uuid.UUID) (User, error)
 	GetUsers() []User

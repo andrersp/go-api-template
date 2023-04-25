@@ -11,7 +11,7 @@ type DBUser struct {
 	db *gorm.DB
 }
 
-func NewDBUser(conn *gorm.DB) user.UserRepository {
+func NewDBUser(conn *gorm.DB) user.UserInterface {
 
 	return &DBUser{
 		db: conn,

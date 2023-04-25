@@ -11,7 +11,7 @@ import (
 type ServiceUserConfiguration func(us *ServiceUser) error
 
 type ServiceUser struct {
-	userRepo user.UserRepository
+	userRepo user.UserInterface
 }
 
 func NewUserService(cfgs ...ServiceUserConfiguration) (*ServiceUser, error) {
