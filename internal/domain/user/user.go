@@ -7,34 +7,31 @@ import (
 )
 
 type User struct {
-	ID       uuid.UUID
-	UserName string
-	Email    string
-	Password string
+	ID       uuid.UUID `gorm:"primaryKey,index"`
+	UserName string    `gorm:"size:40"`
+	Email    string    `gorm:"size:120"`
+	Password string    `gorm:"size:200"`
 }
 
-func CreateNewUser(userName, email, password string) (User, error) {
+func (u *User) Validate() error {
 
-	if userName == "" {
-		return User{}, ErrEmptyName
+	if u.UserName == "" {
+		return ErrEmptyName
 	}
 
-	if _, err := mail.ParseAddress(email); err != nil {
-		return User{}, ErrInvalidEmail
+	if _, err := mail.ParseAddress(u.Email); err != nil {
+		return ErrInvalidEmail
 	}
 
-	if password == "" || len(password) < 6 {
-		return User{}, ErrInvalidPassword
+	if u.Password == "" || len(u.Password) < 6 {
+		return ErrInvalidPassword
 
 	}
 
-	user := User{
-		ID:       uuid.New(),
-		UserName: userName,
-		Email:    email,
-		Password: password,
+	if u.ID == uuid.Nil {
+		u.ID = uuid.New()
 	}
 
-	return user, nil
+	return nil
 
 }

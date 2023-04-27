@@ -1,9 +1,10 @@
 package handlers
 
 import (
-	"fmt"
+	"encoding/json"
 	"net/http"
 
+	"github.com/andrersp/go-api-template/internal/api/handlers/user/dto"
 	service "github.com/andrersp/go-api-template/internal/service/user"
 )
 
@@ -19,8 +20,21 @@ func NewUserHandler(serviceUser service.ServiceUser) UserHander {
 }
 
 func (hu UserHander) GetUsers(w http.ResponseWriter, r *http.Request) {
+
+	var response []dto.DtoUserResponse
+
 	users := hu.serviceUser.GetUsers()
 
-	fmt.Println(users)
-	w.Write([]byte("Usuarios"))
+	for _, user := range users {
+		response = append(response, dto.DtoUserResponse{
+			ID:       user.ID,
+			UserName: user.UserName,
+		})
+
+	}
+
+	json.NewEncoder(w).Encode(response)
+
+	// fmt.Println(users)
+	// w.Write([]byte("Usuarios"))
 }

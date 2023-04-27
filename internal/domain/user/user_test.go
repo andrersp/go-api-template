@@ -49,7 +49,13 @@ func TestUser(t *testing.T) {
 
 	for _, test := range testCases {
 		t.Run(test.TestName, func(t *testing.T) {
-			_, err := CreateNewUser(test.UserName, test.Email, test.Password)
+
+			user := User{
+				UserName: test.UserName,
+				Email:    test.Email,
+				Password: test.Password,
+			}
+			err := user.Validate()
 
 			assert.Equal(t, test.expected, err)
 		})

@@ -3,20 +3,26 @@ package service
 import (
 	"github.com/andrersp/go-api-template/internal/config"
 	"github.com/andrersp/go-api-template/internal/domain/user"
-	"github.com/andrersp/go-api-template/internal/domain/user/database"
+	"github.com/andrersp/go-api-template/internal/repository/database"
 
 	"github.com/google/uuid"
 )
 
-type ServiceUserConfiguration func(us *ServiceUser) error
+type ServiceUserConfiguration func(us *serviceUser) error
 
-type ServiceUser struct {
+type ServiceUser interface {
+	CreateUser(user.User) (uuid.UUID, error)
+	GetUser(uuid.UUID) (user.User, error)
+	GetUsers() []user.User
+}
+
+type serviceUser struct {
 	userRepo user.UserInterface
 }
 
-func NewUserService(cfgs ...ServiceUserConfiguration) (*ServiceUser, error) {
+func NewUserService(cfgs ...ServiceUserConfiguration) (ServiceUser, error) {
 
-	us := &ServiceUser{}
+	us := &serviceUser{}
 
 	for _, cfg := range cfgs {
 		err := cfg(us)
@@ -29,7 +35,7 @@ func NewUserService(cfgs ...ServiceUserConfiguration) (*ServiceUser, error) {
 }
 
 func ServiceWithRDB() ServiceUserConfiguration {
-	return func(us *ServiceUser) error {
+	return func(us *serviceUser) error {
 
 		conn, err := config.ConnectDB()
 
@@ -45,7 +51,12 @@ func ServiceWithRDB() ServiceUserConfiguration {
 	}
 }
 
-func (us ServiceUser) CreateUser(user user.User) (userID uuid.UUID, err error) {
+func (us serviceUser) CreateUser(user user.User) (userID uuid.UUID, err error) {
+
+	err = user.Validate()
+	if err != nil {
+		return
+	}
 
 	err = us.userRepo.CreateUser(user)
 	if err != nil {
@@ -55,11 +66,11 @@ func (us ServiceUser) CreateUser(user user.User) (userID uuid.UUID, err error) {
 	return
 }
 
-func (us ServiceUser) GetUser(ID uuid.UUID) (user user.User, err error) {
+func (us serviceUser) GetUser(ID uuid.UUID) (user user.User, err error) {
 	return us.userRepo.GetUser(ID)
 
 }
 
-func (us ServiceUser) GetUsers() (users []user.User) {
+func (us serviceUser) GetUsers() (users []user.User) {
 	return us.userRepo.GetUsers()
 }

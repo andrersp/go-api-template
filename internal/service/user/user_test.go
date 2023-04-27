@@ -6,6 +6,7 @@ import (
 
 	"github.com/andrersp/go-api-template/internal/config"
 	"github.com/andrersp/go-api-template/internal/domain/user"
+	"github.com/google/uuid"
 
 	"gopkg.in/go-playground/assert.v1"
 )
@@ -24,21 +25,28 @@ func init_user() {
 func TestUserService(t *testing.T) {
 
 	init_user()
-	user, _ := user.CreateNewUser("rspandre", "email@mail.com", "minhasenha1234")
+	user := user.User{
+		UserName: "rspandre",
+		Email:    "meuemail@mal.com",
+		Password: "minhasenha",
+	}
 
 	serviceUser, _ := NewUserService(ServiceWithRDB())
+
+	var ID uuid.UUID
 
 	t.Run("TesCreateUser", func(t *testing.T) {
 		userID, err := serviceUser.CreateUser(user)
 
+		ID = userID
+
 		assert.Equal(t, err, nil)
-		assert.Equal(t, user.ID, userID)
 
 	})
 
 	t.Run("TestGetUser", func(t *testing.T) {
 
-		_, err := serviceUser.GetUser(user.ID)
+		_, err := serviceUser.GetUser(ID)
 		assert.Equal(t, err, nil)
 
 	})
