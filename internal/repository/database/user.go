@@ -28,7 +28,7 @@ func (ru *DBUser) CreateUser(user userDomain.User) error {
 
 func (ru *DBUser) GetUser(ID uuid.UUID) (user userDomain.User, err error) {
 
-	err = ru.db.First(&userDomain.User{}, ID).Error
+	err = ru.db.First(&user, ID).Error
 
 	return
 }

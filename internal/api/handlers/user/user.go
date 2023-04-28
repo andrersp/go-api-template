@@ -1,11 +1,15 @@
 package handlers
 
 import (
-	"encoding/json"
+	"fmt"
 	"net/http"
 
 	"github.com/andrersp/go-api-template/internal/api/handlers/user/dto"
+	erroresponse "github.com/andrersp/go-api-template/internal/pkg/error-response"
+	"github.com/andrersp/go-api-template/internal/pkg/responder"
 	service "github.com/andrersp/go-api-template/internal/service/user"
+	"github.com/go-chi/chi/v5"
+	"github.com/google/uuid"
 )
 
 type UserHander struct {
@@ -32,9 +36,30 @@ func (hu UserHander) GetUsers(w http.ResponseWriter, r *http.Request) {
 		})
 
 	}
+	responder.Success(200, w, response)
+}
 
-	json.NewEncoder(w).Encode(response)
+func (hu UserHander) GetUser(w http.ResponseWriter, r *http.Request) {
+	paramID := chi.URLParam(r, "userID")
 
-	// fmt.Println(users)
-	// w.Write([]byte("Usuarios"))
+	userID, err := uuid.Parse(paramID)
+	if err != nil {
+		err := erroresponse.NewErrorResponse("PARAM_ERROR")
+		responder.Error(400, w, err)
+		return
+	}
+
+	fmt.Println(userID)
+
+	user, err := hu.serviceUser.GetUser(userID)
+
+	if err != nil {
+
+		err := erroresponse.NewErrorResponse("RECORD_NOT_FOUND")
+		responder.Error(400, w, err)
+		return
+
+	}
+
+	responder.Success(200, w, user)
 }

@@ -20,4 +20,5 @@ func RoutersUser(r chi.Router) {
 	hanndlerUser := handlers.NewUserHandler(serviceUser)
 
 	r.Get("/", hanndlerUser.GetUsers)
+	r.Get("/{userID}", hanndlerUser.GetUser)
 }
