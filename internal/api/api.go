@@ -1,6 +1,8 @@
 package api
 
 import (
+	"fmt"
+	"log"
 	"net/http"
 
 	"github.com/andrersp/go-api-template/internal/api/middlewares"
@@ -18,6 +20,9 @@ func StartApiServer() {
 		r.Route("/users", RoutersUser)
 	})
 
-	http.ListenAndServe(config.API_PORT, r)
+	if err := http.ListenAndServe(fmt.Sprintf(":%s", config.API_PORT), r); err != nil {
+		log.Fatal(err)
+
+	}
 
 }

@@ -8,3 +8,10 @@ type DtoUserResponse struct {
 	ID       uuid.UUID `json:"id"`
 	UserName string    `json:"userName"`
 }
+
+type DtoCreateUserRequest struct {
+	UserName        string `json:"userName"`
+	Email           string `json:"email"`
+	Password        string `json:"password"`
+	ConfirmPassword string `json:"confirmPassword"`
+}

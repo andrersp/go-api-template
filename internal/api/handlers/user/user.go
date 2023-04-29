@@ -5,8 +5,9 @@ import (
 	"net/http"
 
 	"github.com/andrersp/go-api-template/internal/api/handlers/user/dto"
+	"github.com/andrersp/go-api-template/internal/api/helpers"
 	erroresponse "github.com/andrersp/go-api-template/internal/pkg/error-response"
-	"github.com/andrersp/go-api-template/internal/pkg/responder"
+
 	service "github.com/andrersp/go-api-template/internal/service/user"
 	"github.com/go-chi/chi/v5"
 	"github.com/google/uuid"
@@ -23,6 +24,21 @@ func NewUserHandler(serviceUser service.ServiceUser) UserHander {
 	}
 }
 
+func (hu UserHander) CreateUser(w http.ResponseWriter, r *http.Request) {
+
+	var user dto.DtoCreateUserRequest
+
+	err := helpers.DecodeJsonBody(w, r, &user)
+
+	if err != nil {
+		helpers.ErrorResponder(422, w, err)
+	}
+
+	helpers.SuccessResponder(200, w, user)
+
+	fmt.Println(user)
+}
+
 func (hu UserHander) GetUsers(w http.ResponseWriter, r *http.Request) {
 
 	var response []dto.DtoUserResponse
@@ -36,7 +52,7 @@ func (hu UserHander) GetUsers(w http.ResponseWriter, r *http.Request) {
 		})
 
 	}
-	responder.Success(200, w, response)
+	helpers.SuccessResponder(200, w, response)
 }
 
 func (hu UserHander) GetUser(w http.ResponseWriter, r *http.Request) {
@@ -44,8 +60,8 @@ func (hu UserHander) GetUser(w http.ResponseWriter, r *http.Request) {
 
 	userID, err := uuid.Parse(paramID)
 	if err != nil {
-		err := erroresponse.NewErrorResponse("PARAM_ERROR")
-		responder.Error(400, w, err)
+		err := erroresponse.NewErrorResponse("PARAM_ERROR", "")
+		helpers.ErrorResponder(400, w, err)
 		return
 	}
 
@@ -55,11 +71,11 @@ func (hu UserHander) GetUser(w http.ResponseWriter, r *http.Request) {
 
 	if err != nil {
 
-		err := erroresponse.NewErrorResponse("RECORD_NOT_FOUND")
-		responder.Error(400, w, err)
+		err := erroresponse.NewErrorResponse("RECORD_NOT_FOUND", "")
+		helpers.ErrorResponder(400, w, err)
 		return
 
 	}
 
-	responder.Success(200, w, user)
+	helpers.SuccessResponder(200, w, user)
 }

@@ -11,7 +11,7 @@ func (er *ErrorResponse) Error() string {
 	return fmt.Sprintf("%s, %s", er.ErrorName, er.ErrorDetail)
 }
 
-func NewErrorResponse(errorName string) *ErrorResponse {
+func NewErrorResponse(errorName, errorDetail string) *ErrorResponse {
 	errorResponse := &ErrorResponse{}
 
 	if _, ok := ERRORS[errorName]; !ok {
@@ -21,7 +21,12 @@ func NewErrorResponse(errorName string) *ErrorResponse {
 	err := ERRORS[errorName]
 
 	errorResponse.ErrorName = errorName
-	errorResponse.ErrorDetail = err["errorDetail"]
+
+	if errorDetail == "" {
+		errorResponse.ErrorDetail = err["errorDetail"]
+	} else {
+		errorResponse.ErrorDetail = errorDetail
+	}
 
 	return errorResponse
 

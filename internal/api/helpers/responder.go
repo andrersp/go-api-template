@@ -1,4 +1,4 @@
-package responder
+package helpers
 
 import (
 	"encoding/json"
@@ -8,12 +8,12 @@ import (
 	erroresponse "github.com/andrersp/go-api-template/internal/pkg/error-response"
 )
 
-func Success(status int, w http.ResponseWriter, payload interface{}) {
+func SuccessResponder(status int, w http.ResponseWriter, payload interface{}) {
 	w.WriteHeader(status)
 	json.NewEncoder(w).Encode(payload)
 }
 
-func Error(status int, w http.ResponseWriter, err error) {
+func ErrorResponder(status int, w http.ResponseWriter, err error) {
 
 	var genericError *erroresponse.ErrorResponse
 
@@ -23,7 +23,7 @@ func Error(status int, w http.ResponseWriter, err error) {
 		return
 	}
 
-	genericError = erroresponse.NewErrorResponse("UNPROCESSABLE_ENTITY")
+	genericError = erroresponse.NewErrorResponse("UNPROCESSABLE_ENTITY", "")
 	w.WriteHeader(http.StatusUnprocessableEntity)
 	json.NewEncoder(w).Encode(genericError)
 
