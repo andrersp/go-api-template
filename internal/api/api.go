@@ -5,13 +5,19 @@ import (
 	"log"
 	"net/http"
 
+	"github.com/andrersp/go-api-template/internal/api/helpers"
 	"github.com/andrersp/go-api-template/internal/api/middlewares"
 	"github.com/andrersp/go-api-template/internal/config"
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
 )
 
+func init() {
+	helpers.NewCustomValidator()
+
+}
 func StartApiServer() {
+
 	r := chi.NewRouter()
 
 	r.Route("/v1", func(r chi.Router) {

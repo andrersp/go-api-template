@@ -10,7 +10,7 @@ type DtoUserResponse struct {
 }
 
 type DtoCreateUserRequest struct {
-	UserName        string `json:"userName"`
+	UserName        string `json:"userName" validate:"required"`
 	Email           string `json:"email"`
 	Password        string `json:"password"`
 	ConfirmPassword string `json:"confirmPassword"`

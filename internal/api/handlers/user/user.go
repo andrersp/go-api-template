@@ -15,12 +15,14 @@ import (
 
 type UserHander struct {
 	serviceUser service.ServiceUser
+	validate    *helpers.CustomValidator
 }
 
-func NewUserHandler(serviceUser service.ServiceUser) UserHander {
+func NewUserHandler(serviceUser service.ServiceUser, validate *helpers.CustomValidator) UserHander {
 
 	return UserHander{
 		serviceUser: serviceUser,
+		validate:    validate,
 	}
 }
 
@@ -34,6 +36,12 @@ func (hu UserHander) CreateUser(w http.ResponseWriter, r *http.Request) {
 		helpers.ErrorResponder(422, w, err)
 	}
 
+	if err = hu.validate.Validate(user); err != nil {
+		helpers.ErrorResponder(400, w, err)
+		return
+
+	}
+
 	helpers.SuccessResponder(200, w, user)
 
 	fmt.Println(user)
@@ -41,7 +49,7 @@ func (hu UserHander) CreateUser(w http.ResponseWriter, r *http.Request) {
 
 func (hu UserHander) GetUsers(w http.ResponseWriter, r *http.Request) {
 
-	var response []dto.DtoUserResponse
+	response := make([]dto.DtoUserResponse, 0)
 
 	users := hu.serviceUser.GetUsers()
 
