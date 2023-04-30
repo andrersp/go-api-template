@@ -16,7 +16,7 @@ type CustomValidator struct {
 	Validator *validator.Validate
 }
 
-func NewCustomValidator() *CustomValidator {
+func NewValidator() *CustomValidator {
 
 	once.Do(func() {
 		newValidate := validator.New()

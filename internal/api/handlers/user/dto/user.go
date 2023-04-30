@@ -9,7 +9,7 @@ type DtoUserResponse struct {
 	UserName string    `json:"userName"`
 }
 
-type DtoCreateUserRequest struct {
+type DtoUserRequest struct {
 	UserName        string `json:"userName" validate:"required"`
 	Email           string `json:"email"`
 	Password        string `json:"password"`

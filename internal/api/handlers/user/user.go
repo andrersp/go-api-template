@@ -15,20 +15,26 @@ import (
 
 type UserHander struct {
 	serviceUser service.ServiceUser
-	validate    *helpers.CustomValidator
 }
 
-func NewUserHandler(serviceUser service.ServiceUser, validate *helpers.CustomValidator) UserHander {
+func NewUserHandler(serviceUser service.ServiceUser) UserHander {
 
 	return UserHander{
 		serviceUser: serviceUser,
-		validate:    validate,
 	}
 }
 
+// CreateUser godoc
+// @Summary Create user
+// @Description Create a new user
+// @Tags Users
+// @Param payload body dto.DtoUserRequest true "User payload"
+// @Success 200
+// @Failure 400 {object} erroresponse.ErrorResponse
+// @Router /users [post]
 func (hu UserHander) CreateUser(w http.ResponseWriter, r *http.Request) {
 
-	var user dto.DtoCreateUserRequest
+	var user dto.DtoUserRequest
 
 	err := helpers.DecodeJsonBody(w, r, &user)
 
@@ -36,7 +42,9 @@ func (hu UserHander) CreateUser(w http.ResponseWriter, r *http.Request) {
 		helpers.ErrorResponder(422, w, err)
 	}
 
-	if err = hu.validate.Validate(user); err != nil {
+	validator := helpers.NewValidator()
+
+	if err = validator.Validate(user); err != nil {
 		helpers.ErrorResponder(400, w, err)
 		return
 
@@ -47,6 +55,13 @@ func (hu UserHander) CreateUser(w http.ResponseWriter, r *http.Request) {
 	fmt.Println(user)
 }
 
+// Users godoc
+// @Summary Get Users
+// @Description Get List of users
+// @Tags Users
+// @Success 200 {array} dto.DtoUserResponse
+// @Failure 400 {object} erroresponse.ErrorResponse
+// @Router /users [get]
 func (hu UserHander) GetUsers(w http.ResponseWriter, r *http.Request) {
 
 	response := make([]dto.DtoUserResponse, 0)
