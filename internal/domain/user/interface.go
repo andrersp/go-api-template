@@ -14,8 +14,10 @@ var (
 )
 
 type UserInterface interface {
-	CreateUser(User) error
-	GetUser(uuid.UUID) (User, error)
-	GetUsers() []User
-	UpdateUser(User) error
+	Create(User) error
+	Get(uuid.UUID) (User, error)
+	GetAll() []User
+	Update(User) error
+	GetByUserName(string) error
+	GetByEmail(string) error
 }

@@ -2,29 +2,43 @@ package helpers
 
 import (
 	"encoding/json"
-	"errors"
 	"net/http"
-
-	erroresponse "github.com/andrersp/go-api-template/internal/pkg/error-response"
 )
+
+type ErrorResponse struct {
+	Success bool   `json:"success"`
+	Msg     string `json:"msg,omitempty"`
+}
+
+type SuccessResponse struct {
+	Success bool `json:"success"`
+}
 
 func SuccessResponder(status int, w http.ResponseWriter, payload interface{}) {
 	w.WriteHeader(status)
+
+	if status == 204 {
+		return
+	}
+	if payload == nil {
+		successResponse := SuccessResponse{
+			Success: true,
+		}
+		json.NewEncoder(w).Encode(successResponse)
+		return
+
+	}
 	json.NewEncoder(w).Encode(payload)
 }
 
 func ErrorResponder(status int, w http.ResponseWriter, err error) {
 
-	var genericError *erroresponse.ErrorResponse
-
-	if errors.As(err, &genericError) {
-		w.WriteHeader(status)
-		json.NewEncoder(w).Encode(err)
-		return
+	errorResponse := ErrorResponse{
+		Success: false,
+		Msg:     err.Error(),
 	}
 
-	genericError = erroresponse.NewErrorResponse("UNPROCESSABLE_ENTITY", "")
 	w.WriteHeader(http.StatusUnprocessableEntity)
-	json.NewEncoder(w).Encode(genericError)
+	json.NewEncoder(w).Encode(errorResponse)
 
 }

@@ -4,22 +4,22 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.com/andrersp/go-api-template/internal/api/handlers/user/dto"
+	"github.com/andrersp/go-api-template/internal/api/handlers/dto"
 	"github.com/andrersp/go-api-template/internal/api/helpers"
-	erroresponse "github.com/andrersp/go-api-template/internal/pkg/error-response"
 
+	userDomain "github.com/andrersp/go-api-template/internal/domain/user"
 	service "github.com/andrersp/go-api-template/internal/service/user"
 	"github.com/go-chi/chi/v5"
 	"github.com/google/uuid"
 )
 
-type UserHander struct {
+type UserController struct {
 	serviceUser service.ServiceUser
 }
 
-func NewUserHandler(serviceUser service.ServiceUser) UserHander {
+func NewUserController(serviceUser service.ServiceUser) UserController {
 
-	return UserHander{
+	return UserController{
 		serviceUser: serviceUser,
 	}
 }
@@ -29,10 +29,10 @@ func NewUserHandler(serviceUser service.ServiceUser) UserHander {
 // @Description Create a new user
 // @Tags Users
 // @Param payload body dto.DtoUserRequest true "User payload"
-// @Success 200
-// @Failure 400 {object} erroresponse.ErrorResponse
+// @Success 201 {object} helpers.SuccessResponse
+// @Failure 400 {object} helpers.ErrorResponse
 // @Router /users [post]
-func (hu UserHander) CreateUser(w http.ResponseWriter, r *http.Request) {
+func (hu UserController) CreateUser(w http.ResponseWriter, r *http.Request) {
 
 	var user dto.DtoUserRequest
 
@@ -50,9 +50,20 @@ func (hu UserHander) CreateUser(w http.ResponseWriter, r *http.Request) {
 
 	}
 
-	helpers.SuccessResponder(200, w, user)
+	userDomain := userDomain.User{
+		UserName: user.UserName,
+		Email:    user.Email,
+		Password: user.Password,
+	}
 
-	fmt.Println(user)
+	_, err = hu.serviceUser.CreateUser(userDomain)
+	if err != nil {
+		helpers.ErrorResponder(400, w, err)
+		return
+	}
+
+	helpers.SuccessResponder(201, w, nil)
+
 }
 
 // Users godoc
@@ -60,9 +71,9 @@ func (hu UserHander) CreateUser(w http.ResponseWriter, r *http.Request) {
 // @Description Get List of users
 // @Tags Users
 // @Success 200 {array} dto.DtoUserResponse
-// @Failure 400 {object} erroresponse.ErrorResponse
+// @Failure 400 {object} helpers.ErrorResponse
 // @Router /users [get]
-func (hu UserHander) GetUsers(w http.ResponseWriter, r *http.Request) {
+func (hu UserController) GetUsers(w http.ResponseWriter, r *http.Request) {
 
 	response := make([]dto.DtoUserResponse, 0)
 
@@ -72,18 +83,19 @@ func (hu UserHander) GetUsers(w http.ResponseWriter, r *http.Request) {
 		response = append(response, dto.DtoUserResponse{
 			ID:       user.ID,
 			UserName: user.UserName,
+			Email:    user.Email,
 		})
 
 	}
 	helpers.SuccessResponder(200, w, response)
 }
 
-func (hu UserHander) GetUser(w http.ResponseWriter, r *http.Request) {
+func (hu UserController) GetUser(w http.ResponseWriter, r *http.Request) {
 	paramID := chi.URLParam(r, "userID")
 
 	userID, err := uuid.Parse(paramID)
 	if err != nil {
-		err := erroresponse.NewErrorResponse("PARAM_ERROR", "")
+
 		helpers.ErrorResponder(400, w, err)
 		return
 	}
@@ -94,7 +106,6 @@ func (hu UserHander) GetUser(w http.ResponseWriter, r *http.Request) {
 
 	if err != nil {
 
-		err := erroresponse.NewErrorResponse("RECORD_NOT_FOUND", "")
 		helpers.ErrorResponder(400, w, err)
 		return
 

@@ -1,9 +1,9 @@
 package helpers
 
 import (
+	"errors"
 	"sync"
 
-	erroresponse "github.com/andrersp/go-api-template/internal/pkg/error-response"
 	"github.com/go-playground/validator/v10"
 )
 
@@ -35,8 +35,8 @@ func (cv *CustomValidator) Validate(i interface{}) error {
 	if err := cv.Validator.Struct(i); err != nil {
 
 		errorDetail := NormalizeError(err)
-		err := erroresponse.NewErrorResponse("PAYLOAD_ERROR", errorDetail)
-		return err
+
+		return errors.New(errorDetail)
 	}
 	return nil
 }
@@ -60,6 +60,10 @@ func validate(errors validator.ValidationErrors) (resultError string) {
 			return
 		case "min":
 			resultError = err.Field() + " must have " + err.Param() + " characters at least!"
+			return
+		case "containsany":
+
+			resultError = err.Field() + " must have " + err.Param() + " at characters!"
 			return
 		default:
 			resultError += "error on field " + err.Tag() + " " + err.Field()

@@ -43,7 +43,7 @@ func ServiceWithRDB() ServiceUserConfiguration {
 			return err
 		}
 
-		rdbUser := database.NewDBUser(conn)
+		rdbUser := database.NewUserRepository(conn)
 		us.userRepo = rdbUser
 
 		return nil
@@ -58,7 +58,7 @@ func (us serviceUser) CreateUser(user user.User) (userID uuid.UUID, err error) {
 		return
 	}
 
-	err = us.userRepo.CreateUser(user)
+	err = us.userRepo.Create(user)
 	if err != nil {
 		return uuid.Nil, err
 	}
@@ -67,10 +67,10 @@ func (us serviceUser) CreateUser(user user.User) (userID uuid.UUID, err error) {
 }
 
 func (us serviceUser) GetUser(ID uuid.UUID) (user user.User, err error) {
-	return us.userRepo.GetUser(ID)
+	return us.userRepo.Get(ID)
 
 }
 
 func (us serviceUser) GetUsers() (users []user.User) {
-	return us.userRepo.GetUsers()
+	return us.userRepo.GetAll()
 }

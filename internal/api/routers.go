@@ -3,7 +3,7 @@ package api
 import (
 	"log"
 
-	handlers "github.com/andrersp/go-api-template/internal/api/handlers/user"
+	controller "github.com/andrersp/go-api-template/internal/api/handlers/controller"
 	service "github.com/andrersp/go-api-template/internal/service/user"
 	"github.com/go-chi/chi/v5"
 )
@@ -17,7 +17,7 @@ func RoutersUser(r chi.Router) {
 		log.Fatal(err)
 	}
 
-	hanndlerUser := handlers.NewUserHandler(serviceUser)
+	hanndlerUser := controller.NewUserController(serviceUser)
 
 	r.Post("/", hanndlerUser.CreateUser)
 	r.Get("/", hanndlerUser.GetUsers)
