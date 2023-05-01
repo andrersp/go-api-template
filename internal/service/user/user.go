@@ -1,6 +1,8 @@
 package service
 
 import (
+	"errors"
+
 	"github.com/andrersp/go-api-template/internal/config"
 	"github.com/andrersp/go-api-template/internal/domain/user"
 	"github.com/andrersp/go-api-template/internal/repository/database"
@@ -56,6 +58,10 @@ func (us serviceUser) CreateUser(user user.User) (userID uuid.UUID, err error) {
 	err = user.Validate()
 	if err != nil {
 		return
+	}
+
+	if ok := us.userRepo.FindDuplicate(user.UserName, user.Email); ok {
+		return uuid.Nil, errors.New("duplicate username or email")
 	}
 
 	err = us.userRepo.Create(user)

@@ -45,10 +45,13 @@ func (ru *UserRepository) GetAll() []userDomain.User {
 	return users
 }
 
-func (ru *UserRepository) GetByUserName(userName string) error {
-	return nil
-}
+func (ru *UserRepository) FindDuplicate(userName, email string) (exist bool) {
 
-func (ru *UserRepository) GetByEmail(email string) error {
-	return nil
+	var user userDomain.User
+	err := ru.db.
+		Select("user_name", "email").
+		Where("user_name = ?", userName).
+		Or("email = ?", email).First(&user).Error
+	return err == nil
+
 }

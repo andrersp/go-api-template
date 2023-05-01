@@ -18,6 +18,5 @@ type UserInterface interface {
 	Get(uuid.UUID) (User, error)
 	GetAll() []User
 	Update(User) error
-	GetByUserName(string) error
-	GetByEmail(string) error
+	FindDuplicate(string, string) bool
 }

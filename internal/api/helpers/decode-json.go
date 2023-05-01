@@ -22,19 +22,19 @@ func DecodeJsonBody(w http.ResponseWriter, r *http.Request, dst interface{}) err
 
 		switch {
 		case errors.As(err, &syntaxError):
-			msg := fmt.Sprintf("Request body contains badly-formed JSON (at position %d)", syntaxError.Offset)
+			msg := fmt.Sprintf("request body contains badly-formed JSON (at position %d)", syntaxError.Offset)
 			return errors.New(msg)
 		case errors.Is(err, io.ErrUnexpectedEOF):
 			msg := "request body contains badly-formed JSON"
 			return errors.New(msg)
 
 		case errors.As(err, &unmarshalTypeError):
-			msg := fmt.Sprintf("Request body contains an invalid value for the %q field (at position %d)", unmarshalTypeError.Field, unmarshalTypeError.Offset)
+			msg := fmt.Sprintf("request body contains an invalid value for the %q field (at position %d)", unmarshalTypeError.Field, unmarshalTypeError.Offset)
 			return errors.New(msg)
 
 		case strings.HasPrefix(err.Error(), "json: unknown field "):
 			fieldName := strings.TrimPrefix(err.Error(), "json: unknown field ")
-			msg := fmt.Sprintf("Request body contains unknown field %s", fieldName)
+			msg := fmt.Sprintf("request body contains unknown field %s", fieldName)
 			return errors.New(msg)
 
 		case errors.Is(err, io.EOF):
