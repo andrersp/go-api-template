@@ -4,6 +4,7 @@ import (
 	"errors"
 	"net/mail"
 
+	secutiry "github.com/andrersp/go-api-template/internal/pkg/security"
 	"github.com/google/uuid"
 )
 
@@ -32,6 +33,7 @@ func (u *User) Validate() error {
 	if u.ID == uuid.Nil {
 		u.ID = uuid.New()
 	}
+	u.Password, _ = secutiry.GenerateHash(u.Password)
 
 	return nil
 

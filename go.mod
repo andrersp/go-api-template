@@ -8,6 +8,7 @@ require (
 	github.com/google/uuid v1.3.0
 	github.com/swaggo/http-swagger/v2 v2.0.1
 	github.com/swaggo/swag v1.16.1
+	golang.org/x/crypto v0.7.0
 	gopkg.in/go-playground/assert.v1 v1.2.1
 	gorm.io/driver/sqlite v1.5.0
 	gorm.io/gorm v1.25.0
@@ -28,7 +29,6 @@ require (
 	github.com/mailru/easyjson v0.7.7 // indirect
 	github.com/mattn/go-sqlite3 v1.14.15 // indirect
 	github.com/swaggo/files/v2 v2.0.0 // indirect
-	golang.org/x/crypto v0.7.0 // indirect
 	golang.org/x/sys v0.7.0 // indirect
 	golang.org/x/text v0.9.0 // indirect
 	golang.org/x/tools v0.8.0 // indirect

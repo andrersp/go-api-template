@@ -28,13 +28,13 @@ func NewUserController(serviceUser service.ServiceUser) UserController {
 // @Summary Create user
 // @Description Create a new user
 // @Tags Users
-// @Param payload body dto.DtoUserRequest true "User payload"
+// @Param payload body dto.UserRequest true "User payload"
 // @Success 201 {object} dto.SuccessResponse
 // @Failure 400 {object} dto.ErrorResponse
 // @Router /users [post]
 func (hu UserController) CreateUser(w http.ResponseWriter, r *http.Request) {
 
-	var user dto.DtoUserRequest
+	var user dto.UserRequest
 	errResponse := dto.ErrorResponse{Success: false}
 
 	if err := helpers.DecodeJsonBody(w, r, &user); err != nil {
@@ -73,17 +73,17 @@ func (hu UserController) CreateUser(w http.ResponseWriter, r *http.Request) {
 // @Summary Get Users
 // @Description Get List of users
 // @Tags Users
-// @Success 200 {array} dto.DtoUserResponse
+// @Success 200 {array} dto.UserResponse
 // @Failure 400 {object} dto.ErrorResponse
 // @Router /users [get]
 func (hu UserController) GetUsers(w http.ResponseWriter, r *http.Request) {
 
-	response := make([]dto.DtoUserResponse, 0)
+	response := make([]dto.UserResponse, 0)
 
 	users := hu.serviceUser.GetUsers()
 
 	for _, user := range users {
-		response = append(response, dto.DtoUserResponse{
+		response = append(response, dto.UserResponse{
 			ID:       user.ID,
 			UserName: user.UserName,
 			Email:    user.Email,
@@ -93,10 +93,19 @@ func (hu UserController) GetUsers(w http.ResponseWriter, r *http.Request) {
 	helpers.Responder(200, w, response)
 }
 
+// GetUser godoc
+// @Summary Get User
+// @Description Get user by id
+// @Tags Users
+// @Param userID path string true "User id"
+// @Success 200 {object} dto.UserResponse
+// @Failure 400 {object} dto.ErrorResponse
+// @Router /users/{userID} [get]
 func (hu UserController) GetUser(w http.ResponseWriter, r *http.Request) {
 	paramID := chi.URLParam(r, "userID")
 
 	errResponse := dto.ErrorResponse{Success: false}
+	userResponse := dto.UserResponse{}
 
 	userID, err := uuid.Parse(paramID)
 	if err != nil {
@@ -113,6 +122,9 @@ func (hu UserController) GetUser(w http.ResponseWriter, r *http.Request) {
 		return
 
 	}
+	userResponse.Email = user.Email
+	userResponse.UserName = user.UserName
+	userResponse.ID = user.ID
 
-	helpers.Responder(200, w, user)
+	helpers.Responder(200, w, userResponse)
 }

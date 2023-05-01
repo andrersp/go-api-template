@@ -4,13 +4,13 @@ import (
 	"github.com/google/uuid"
 )
 
-type DtoUserResponse struct {
+type UserResponse struct {
 	ID       uuid.UUID `json:"id"`
 	UserName string    `json:"userName"`
 	Email    string    `json:"email"`
 }
 
-type DtoUserRequest struct {
+type UserRequest struct {
 	UserName        string `json:"userName" validate:"required"`
 	Email           string `json:"email" validate:"required,email"`
 	Password        string `json:"password" validate:"required,min=8,containsany=!@#?*$" example:"yourpassword!@#$"`
