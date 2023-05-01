@@ -1,6 +1,7 @@
 package user
 
 import (
+	"errors"
 	"net/mail"
 
 	"github.com/google/uuid"
@@ -16,15 +17,15 @@ type User struct {
 func (u *User) Validate() error {
 
 	if u.UserName == "" {
-		return ErrEmptyName
+		return errors.New("userName cant be empty")
 	}
 
 	if _, err := mail.ParseAddress(u.Email); err != nil {
-		return ErrInvalidEmail
+		return errors.New("invalid email")
 	}
 
 	if u.Password == "" || len(u.Password) < 6 {
-		return ErrInvalidPassword
+		return errors.New("character number less than 6")
 
 	}
 

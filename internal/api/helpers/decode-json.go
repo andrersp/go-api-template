@@ -11,12 +11,6 @@ import (
 
 func DecodeJsonBody(w http.ResponseWriter, r *http.Request, dst interface{}) error {
 
-	contentType := r.Header.Get("Content-Type")
-	if contentType != "" {
-		fmt.Println(contentType)
-
-	}
-
 	decoder := json.NewDecoder(r.Body)
 	decoder.DisallowUnknownFields()
 
@@ -31,7 +25,7 @@ func DecodeJsonBody(w http.ResponseWriter, r *http.Request, dst interface{}) err
 			msg := fmt.Sprintf("Request body contains badly-formed JSON (at position %d)", syntaxError.Offset)
 			return errors.New(msg)
 		case errors.Is(err, io.ErrUnexpectedEOF):
-			msg := "Request body contains badly-formed JSON"
+			msg := "request body contains badly-formed JSON"
 			return errors.New(msg)
 
 		case errors.As(err, &unmarshalTypeError):
@@ -44,11 +38,11 @@ func DecodeJsonBody(w http.ResponseWriter, r *http.Request, dst interface{}) err
 			return errors.New(msg)
 
 		case errors.Is(err, io.EOF):
-			msg := "Request body must not be empty"
+			msg := "request body must not be empty"
 			return errors.New(msg)
 
 		case err.Error() == "http: request body too large":
-			msg := "Request body must not be larger than 1MB"
+			msg := "request body must not be larger than 1MB"
 			return errors.New(msg)
 
 		default:
@@ -59,7 +53,7 @@ func DecodeJsonBody(w http.ResponseWriter, r *http.Request, dst interface{}) err
 
 	err = decoder.Decode(&struct{}{})
 	if err != io.EOF {
-		msg := "Request body must only contain a single JSON object"
+		msg := "request body must only contain a single JSON object"
 		return errors.New(msg)
 	}
 

@@ -18,6 +18,7 @@ func init() {
 	if err != nil {
 		log.Fatal()
 	}
+
 }
 
 // @title Swagger Example API

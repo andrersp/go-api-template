@@ -1,11 +1,11 @@
 package handlers
 
 import (
-	"fmt"
 	"net/http"
 
 	"github.com/andrersp/go-api-template/internal/api/handlers/dto"
 	"github.com/andrersp/go-api-template/internal/api/helpers"
+	customvalidator "github.com/andrersp/go-api-template/internal/pkg/custom-validator"
 
 	userDomain "github.com/andrersp/go-api-template/internal/domain/user"
 	service "github.com/andrersp/go-api-template/internal/service/user"
@@ -29,23 +29,25 @@ func NewUserController(serviceUser service.ServiceUser) UserController {
 // @Description Create a new user
 // @Tags Users
 // @Param payload body dto.DtoUserRequest true "User payload"
-// @Success 201 {object} helpers.SuccessResponse
-// @Failure 400 {object} helpers.ErrorResponse
+// @Success 201 {object} dto.SuccessResponse
+// @Failure 400 {object} dto.ErrorResponse
 // @Router /users [post]
 func (hu UserController) CreateUser(w http.ResponseWriter, r *http.Request) {
 
 	var user dto.DtoUserRequest
+	errResponse := dto.ErrorResponse{Success: false}
 
-	err := helpers.DecodeJsonBody(w, r, &user)
-
-	if err != nil {
-		helpers.ErrorResponder(422, w, err)
+	if err := helpers.DecodeJsonBody(w, r, &user); err != nil {
+		errResponse.Msg = err.Error()
+		helpers.Responder(422, w, errResponse)
+		return
 	}
 
-	validator := helpers.NewValidator()
+	validator := customvalidator.Get()
 
-	if err = validator.Validate(user); err != nil {
-		helpers.ErrorResponder(400, w, err)
+	if err := validator.Validate(user); err != nil {
+		errResponse.Msg = err.Error()
+		helpers.Responder(422, w, errResponse)
 		return
 
 	}
@@ -56,13 +58,14 @@ func (hu UserController) CreateUser(w http.ResponseWriter, r *http.Request) {
 		Password: user.Password,
 	}
 
-	_, err = hu.serviceUser.CreateUser(userDomain)
+	_, err := hu.serviceUser.CreateUser(userDomain)
 	if err != nil {
-		helpers.ErrorResponder(400, w, err)
+		errResponse.Msg = err.Error()
+		helpers.Responder(422, w, errResponse)
 		return
 	}
 
-	helpers.SuccessResponder(201, w, nil)
+	helpers.Responder(201, w, nil)
 
 }
 
@@ -71,7 +74,7 @@ func (hu UserController) CreateUser(w http.ResponseWriter, r *http.Request) {
 // @Description Get List of users
 // @Tags Users
 // @Success 200 {array} dto.DtoUserResponse
-// @Failure 400 {object} helpers.ErrorResponse
+// @Failure 400 {object} dto.ErrorResponse
 // @Router /users [get]
 func (hu UserController) GetUsers(w http.ResponseWriter, r *http.Request) {
 
@@ -87,29 +90,29 @@ func (hu UserController) GetUsers(w http.ResponseWriter, r *http.Request) {
 		})
 
 	}
-	helpers.SuccessResponder(200, w, response)
+	helpers.Responder(200, w, response)
 }
 
 func (hu UserController) GetUser(w http.ResponseWriter, r *http.Request) {
 	paramID := chi.URLParam(r, "userID")
 
+	errResponse := dto.ErrorResponse{Success: false}
+
 	userID, err := uuid.Parse(paramID)
 	if err != nil {
-
-		helpers.ErrorResponder(400, w, err)
+		errResponse.Msg = err.Error()
+		helpers.Responder(400, w, errResponse)
 		return
 	}
-
-	fmt.Println(userID)
 
 	user, err := hu.serviceUser.GetUser(userID)
 
 	if err != nil {
-
-		helpers.ErrorResponder(400, w, err)
+		errResponse.Msg = err.Error()
+		helpers.Responder(400, w, errResponse)
 		return
 
 	}
 
-	helpers.SuccessResponder(200, w, user)
+	helpers.Responder(200, w, user)
 }

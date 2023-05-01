@@ -1,4 +1,4 @@
-package helpers
+package customvalidator
 
 import (
 	"errors"
@@ -8,40 +8,40 @@ import (
 )
 
 var (
-	customValidator *CustomValidator
-	once            sync.Once
+	v    *customValidator
+	once sync.Once
 )
 
-type CustomValidator struct {
-	Validator *validator.Validate
-}
-
-func NewValidator() *CustomValidator {
+func Get() *customValidator {
 
 	once.Do(func() {
 		newValidate := validator.New()
 
-		customValidator = &CustomValidator{
+		v = &customValidator{
 			Validator: newValidate,
 		}
 
 	})
 
-	return customValidator
+	return v
 
 }
 
-func (cv *CustomValidator) Validate(i interface{}) error {
+type customValidator struct {
+	Validator *validator.Validate
+}
+
+func (cv *customValidator) Validate(i interface{}) error {
 	if err := cv.Validator.Struct(i); err != nil {
 
-		errorDetail := NormalizeError(err)
+		errorDetail := normalizeError(err)
 
 		return errors.New(errorDetail)
 	}
 	return nil
 }
 
-func NormalizeError(requestErr error) string {
+func normalizeError(requestErr error) string {
 
 	return validate(requestErr.(validator.ValidationErrors))
 
@@ -62,8 +62,10 @@ func validate(errors validator.ValidationErrors) (resultError string) {
 			resultError = err.Field() + " must have " + err.Param() + " characters at least!"
 			return
 		case "containsany":
-
-			resultError = err.Field() + " must have " + err.Param() + " at characters!"
+			resultError = err.Field() + " must contain at least one of these characters " + err.Param()
+			return
+		case "eqfield":
+			resultError = err.Field() + " does not match " + err.Param()
 			return
 		default:
 			resultError += "error on field " + err.Tag() + " " + err.Field()

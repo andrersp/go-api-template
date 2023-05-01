@@ -13,6 +13,6 @@ type DtoUserResponse struct {
 type DtoUserRequest struct {
 	UserName        string `json:"userName" validate:"required"`
 	Email           string `json:"email" validate:"required,email"`
-	Password        string `json:"password" validate:"required,min=8,containsany=!@#?*$"`
+	Password        string `json:"password" validate:"required,min=8,containsany=!@#?*$" example:"yourpassword!@#$"`
 	ConfirmPassword string `json:"confirmPassword" validate:"required,eqfield=Password"`
 }

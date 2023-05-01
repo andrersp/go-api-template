@@ -5,40 +5,12 @@ import (
 	"net/http"
 )
 
-type ErrorResponse struct {
-	Success bool   `json:"success"`
-	Msg     string `json:"msg,omitempty"`
-}
+func Responder(status int, w http.ResponseWriter, payload interface{}) {
 
-type SuccessResponse struct {
-	Success bool `json:"success"`
-}
-
-func SuccessResponder(status int, w http.ResponseWriter, payload interface{}) {
+	if status == 204 || payload == nil {
+		w.WriteHeader(status)
+		return
+	}
 	w.WriteHeader(status)
-
-	if status == 204 {
-		return
-	}
-	if payload == nil {
-		successResponse := SuccessResponse{
-			Success: true,
-		}
-		json.NewEncoder(w).Encode(successResponse)
-		return
-
-	}
 	json.NewEncoder(w).Encode(payload)
-}
-
-func ErrorResponder(status int, w http.ResponseWriter, err error) {
-
-	errorResponse := ErrorResponse{
-		Success: false,
-		Msg:     err.Error(),
-	}
-
-	w.WriteHeader(http.StatusUnprocessableEntity)
-	json.NewEncoder(w).Encode(errorResponse)
-
 }
