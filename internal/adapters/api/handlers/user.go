@@ -3,21 +3,20 @@ package handlers
 import (
 	"net/http"
 
-	"github.com/andrersp/go-api-template/internal/api/handlers/dto"
-	"github.com/andrersp/go-api-template/internal/api/helpers"
+	"github.com/andrersp/go-api-template/internal/adapters/api/helpers"
+	"github.com/andrersp/go-api-template/internal/core/dto"
+	"github.com/andrersp/go-api-template/internal/core/ports"
 	customvalidator "github.com/andrersp/go-api-template/internal/pkg/custom-validator"
 
-	userDomain "github.com/andrersp/go-api-template/internal/domain/user"
-	service "github.com/andrersp/go-api-template/internal/service/user"
 	"github.com/go-chi/chi/v5"
 	"github.com/google/uuid"
 )
 
 type UserController struct {
-	serviceUser service.ServiceUser
+	serviceUser ports.UserSerice
 }
 
-func NewUserController(serviceUser service.ServiceUser) UserController {
+func NewUserController(serviceUser ports.UserSerice) UserController {
 
 	return UserController{
 		serviceUser: serviceUser,
@@ -52,13 +51,7 @@ func (hu UserController) CreateUser(w http.ResponseWriter, r *http.Request) {
 
 	}
 
-	userDomain := userDomain.User{
-		UserName: user.UserName,
-		Email:    user.Email,
-		Password: user.Password,
-	}
-
-	_, err := hu.serviceUser.CreateUser(userDomain)
+	err := hu.serviceUser.Create(user)
 	if err != nil {
 		errResponse.Msg = err.Error()
 		helpers.Responder(422, w, errResponse)
@@ -80,7 +73,7 @@ func (hu UserController) GetUsers(w http.ResponseWriter, r *http.Request) {
 
 	response := make([]dto.UserResponse, 0)
 
-	users := hu.serviceUser.GetUsers()
+	users := hu.serviceUser.GetAll()
 
 	for _, user := range users {
 		response = append(response, dto.UserResponse{
@@ -114,7 +107,7 @@ func (hu UserController) GetUser(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	user, err := hu.serviceUser.GetUser(userID)
+	user, err := hu.serviceUser.Get(userID)
 
 	if err != nil {
 		errResponse.Msg = err.Error()

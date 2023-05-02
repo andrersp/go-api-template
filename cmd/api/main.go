@@ -3,7 +3,7 @@ package main
 import (
 	"log"
 
-	api "github.com/andrersp/go-api-template/internal/api"
+	api "github.com/andrersp/go-api-template/internal/adapters/api"
 	"github.com/andrersp/go-api-template/internal/config"
 )
 

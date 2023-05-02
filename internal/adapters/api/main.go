@@ -6,7 +6,7 @@ import (
 	"net/http"
 
 	_ "github.com/andrersp/go-api-template/docs"
-	"github.com/andrersp/go-api-template/internal/api/middlewares"
+	"github.com/andrersp/go-api-template/internal/adapters/api/middlewares"
 	"github.com/andrersp/go-api-template/internal/config"
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
