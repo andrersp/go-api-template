@@ -1,4 +1,4 @@
-package config
+package adapters
 
 var (
 	API_PORT string

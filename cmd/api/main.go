@@ -3,18 +3,19 @@ package main
 import (
 	"log"
 
+	"github.com/andrersp/go-api-template/internal/adapters"
 	api "github.com/andrersp/go-api-template/internal/adapters/api"
-	"github.com/andrersp/go-api-template/internal/config"
+	repository "github.com/andrersp/go-api-template/internal/adapters/repository/postgres"
 )
 
 func init() {
-	config.SetConfig()
-	err := config.CreateSQLiteConn()
+	adapters.SetConfig()
+	err := repository.CreateSQLiteConn()
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	err = config.AutoMigrate()
+	err = repository.AutoMigrate()
 	if err != nil {
 		log.Fatal()
 	}

@@ -3,8 +3,6 @@ package service
 import (
 	"errors"
 
-	repository "github.com/andrersp/go-api-template/internal/adapters/repository/postgres"
-	"github.com/andrersp/go-api-template/internal/config"
 	"github.com/andrersp/go-api-template/internal/core/domain"
 	"github.com/andrersp/go-api-template/internal/core/dto"
 	"github.com/andrersp/go-api-template/internal/core/ports"
@@ -32,17 +30,10 @@ func NewUserService(cfgs ...ServiceUserConfiguration) (*UserService, error) {
 	return us, nil
 }
 
-func UserServiceWithRDB() ServiceUserConfiguration {
+func UserServiceWithRDB(repository ports.UserRepository) ServiceUserConfiguration {
 	return func(us *UserService) error {
 
-		conn, err := config.ConnectDB()
-
-		if err != nil {
-			return err
-		}
-
-		rdbUser := repository.NewUserRepository(conn)
-		us.userRepo = rdbUser
+		us.userRepo = repository
 
 		return nil
 
