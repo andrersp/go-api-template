@@ -90,7 +90,7 @@ func (hu UserHandler) GetUsers(w http.ResponseWriter, r *http.Request) {
 // @Summary Get User
 // @Description Get user by id
 // @Tags Users
-// @Param userID path string true "User id"
+// @Param userID path string true "User id" Format(uuid)
 // @Success 200 {object} dto.UserResponse
 // @Failure 400 {object} dto.ErrorResponse
 // @Router /users/{userID} [get]
