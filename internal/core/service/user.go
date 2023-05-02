@@ -32,7 +32,7 @@ func NewUserService(cfgs ...ServiceUserConfiguration) (*UserService, error) {
 	return us, nil
 }
 
-func ServiceWithRDB() ServiceUserConfiguration {
+func UserServiceWithRDB() ServiceUserConfiguration {
 	return func(us *UserService) error {
 
 		conn, err := config.ConnectDB()
@@ -56,10 +56,9 @@ func (us UserService) Create(userRequest dto.UserRequest) (err error) {
 		Email:    userRequest.Email,
 		Password: userRequest.Password,
 	}
-	// err = user.Vali
-	// if err != nil {
-	// 	return
-	// }
+	if err := user.Validate(); err != nil {
+		return err
+	}
 
 	if ok := us.userRepo.FindDuplicate(user.UserName, user.Email); ok {
 		return errors.New("duplicate username or email")

@@ -12,13 +12,13 @@ import (
 	"github.com/google/uuid"
 )
 
-type UserController struct {
+type UserHandler struct {
 	serviceUser ports.UserSerice
 }
 
-func NewUserController(serviceUser ports.UserSerice) UserController {
+func NewUserHandler(serviceUser ports.UserSerice) UserHandler {
 
-	return UserController{
+	return UserHandler{
 		serviceUser: serviceUser,
 	}
 }
@@ -31,7 +31,7 @@ func NewUserController(serviceUser ports.UserSerice) UserController {
 // @Success 201 {object} dto.SuccessResponse
 // @Failure 400 {object} dto.ErrorResponse
 // @Router /users [post]
-func (hu UserController) CreateUser(w http.ResponseWriter, r *http.Request) {
+func (hu UserHandler) CreateUser(w http.ResponseWriter, r *http.Request) {
 
 	var user dto.UserRequest
 	errResponse := dto.ErrorResponse{Success: false}
@@ -69,7 +69,7 @@ func (hu UserController) CreateUser(w http.ResponseWriter, r *http.Request) {
 // @Success 200 {array} dto.UserResponse
 // @Failure 400 {object} dto.ErrorResponse
 // @Router /users [get]
-func (hu UserController) GetUsers(w http.ResponseWriter, r *http.Request) {
+func (hu UserHandler) GetUsers(w http.ResponseWriter, r *http.Request) {
 
 	response := make([]dto.UserResponse, 0)
 
@@ -94,7 +94,7 @@ func (hu UserController) GetUsers(w http.ResponseWriter, r *http.Request) {
 // @Success 200 {object} dto.UserResponse
 // @Failure 400 {object} dto.ErrorResponse
 // @Router /users/{userID} [get]
-func (hu UserController) GetUser(w http.ResponseWriter, r *http.Request) {
+func (hu UserHandler) GetUser(w http.ResponseWriter, r *http.Request) {
 	paramID := chi.URLParam(r, "userID")
 
 	errResponse := dto.ErrorResponse{Success: false}

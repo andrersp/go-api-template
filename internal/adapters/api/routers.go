@@ -11,14 +11,14 @@ import (
 
 func RoutersUser(r chi.Router) {
 	serviceUser, err := service.NewUserService(
-		service.ServiceWithRDB(),
+		service.UserServiceWithRDB(),
 	)
 
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	hanndlerUser := userHandler.NewUserController(serviceUser)
+	hanndlerUser := userHandler.NewUserHandler(serviceUser)
 
 	r.Post("/", hanndlerUser.CreateUser)
 	r.Get("/", hanndlerUser.GetUsers)
