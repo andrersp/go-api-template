@@ -7,7 +7,6 @@ import (
 	"github.com/andrersp/go-api-template/internal/core/dto"
 	"github.com/andrersp/go-api-template/internal/core/ports"
 	customvalidator "github.com/andrersp/go-api-template/internal/pkg/custom-validator"
-	secutiry "github.com/andrersp/go-api-template/internal/pkg/security"
 
 	"github.com/go-chi/chi/v5"
 	"github.com/google/uuid"
@@ -120,7 +119,43 @@ func (hu UserHandler) GetUser(w http.ResponseWriter, r *http.Request) {
 	userResponse.UserName = user.UserName
 	userResponse.ID = user.ID
 
-	secutiry.CreateToken(user.ID)
-
 	helpers.Responder(200, w, userResponse)
+}
+
+// Login godoc
+// @Summary Login
+// @Description User Login
+// @Tags Login
+// @Param Payload body dto.LoginRequest true "Payload login"
+// @Success 200 {object} dto.LoginResponse
+// @Failure 400 {object} dto.ErrorResponse
+// @Router /login [post]
+func (hu UserHandler) Login(w http.ResponseWriter, r *http.Request) {
+	var payload dto.LoginRequest
+
+	errResponse := dto.ErrorResponse{Success: false}
+
+	if err := helpers.DecodeJsonBody(w, r, &payload); err != nil {
+		errResponse.Msg = err.Error()
+		helpers.Responder(422, w, errResponse)
+		return
+	}
+
+	userResponse, err := hu.serviceUser.Login(payload.UserName, payload.Password)
+	if err != nil {
+		errResponse.Msg = err.Error()
+		helpers.Responder(422, w, errResponse)
+		return
+	}
+
+	loginResponse, err := helpers.CreateToken(userResponse.ID)
+
+	if err != nil {
+		errResponse.Msg = err.Error()
+		helpers.Responder(500, w, errResponse)
+		return
+	}
+
+	helpers.Responder(200, w, loginResponse)
+
 }

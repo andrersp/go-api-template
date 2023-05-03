@@ -20,6 +20,11 @@ type LoginRequest struct {
 	Password string `json:"password" validate:"required" example:"mypassword"`
 }
 
+type LoginResponse struct {
+	AccessToken string `json:"accessToken"`
+	TokenType   string `json:"tokenType"`
+}
+
 type TokenData struct {
 	UserID string `json:"id"`
 }

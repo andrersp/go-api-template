@@ -11,6 +11,7 @@ type UserSerice interface {
 	Get(uuid.UUID) (dto.UserResponse, error)
 	GetAll() []dto.UserResponse
 	Update(dto.UserRequest) error
+	Login(string, string) (domain.User, error)
 }
 
 type UserRepository interface {
@@ -19,4 +20,5 @@ type UserRepository interface {
 	GetAll() []domain.User
 	Update(domain.User) error
 	FindDuplicate(string, string) bool
+	Login(string) (domain.User, error)
 }

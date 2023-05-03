@@ -19,26 +19,26 @@ func NewUserRepository(conn *gorm.DB) ports.UserRepository {
 	}
 }
 
-func (ru *UserRepository) Create(user domain.User) error {
+func (ru UserRepository) Create(user domain.User) error {
 
 	err := ru.db.Model(&domain.User{}).Create(user).Error
 
 	return err
 }
 
-func (ru *UserRepository) Get(ID uuid.UUID) (user domain.User, err error) {
+func (ru UserRepository) Get(ID uuid.UUID) (user domain.User, err error) {
 
 	err = ru.db.First(&user, ID).Error
 
 	return
 }
 
-func (ru *UserRepository) Update(user domain.User) error {
+func (ru UserRepository) Update(user domain.User) error {
 
 	return nil
 }
 
-func (ru *UserRepository) GetAll() []domain.User {
+func (ru UserRepository) GetAll() []domain.User {
 
 	var users []domain.User
 	ru.db.Find(&users)
@@ -46,7 +46,7 @@ func (ru *UserRepository) GetAll() []domain.User {
 	return users
 }
 
-func (ru *UserRepository) FindDuplicate(userName, email string) (exist bool) {
+func (ru UserRepository) FindDuplicate(userName, email string) (exist bool) {
 
 	var user domain.User
 	err := ru.db.
@@ -55,4 +55,9 @@ func (ru *UserRepository) FindDuplicate(userName, email string) (exist bool) {
 		Or("email = ?", email).First(&user).Error
 	return err == nil
 
+}
+
+func (ru UserRepository) Login(userName string) (user domain.User, err error) {
+	err = ru.db.Where("user_name = ?", userName).First(&user).Error
+	return
 }

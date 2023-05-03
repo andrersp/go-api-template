@@ -28,9 +28,10 @@ func RoutersUser(r chi.Router) {
 		log.Fatal(err)
 	}
 
-	hanndlerUser := userHandler.NewUserHandler(serviceUser)
+	handlerUser := userHandler.NewUserHandler(serviceUser)
 
-	r.Post("/", hanndlerUser.CreateUser)
-	r.Get("/", hanndlerUser.GetUsers)
-	r.Get("/{userID}", hanndlerUser.GetUser)
+	r.Post("/", handlerUser.CreateUser)
+	r.Get("/", handlerUser.GetUsers)
+	r.Get("/{userID}", handlerUser.GetUser)
+	r.Post("/login", handlerUser.Login)
 }

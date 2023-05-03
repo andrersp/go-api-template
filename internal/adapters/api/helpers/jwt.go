@@ -1,4 +1,4 @@
-package secutiry
+package helpers
 
 import (
 	"errors"
@@ -23,7 +23,7 @@ type jwtLoginClaims struct {
 	jwt.RegisteredClaims
 }
 
-func CreateToken(ID uuid.UUID) {
+func CreateToken(ID uuid.UUID) (loginResponse dto.LoginResponse, err error) {
 
 	now := time.Now()
 	atClaims := jwtLoginClaims{
@@ -37,10 +37,12 @@ func CreateToken(ID uuid.UUID) {
 	claims := jwt.NewWithClaims(jwt.SigningMethodHS256, atClaims)
 	accessToken, err := claims.SignedString([]byte("4a031514c89b259aaad22c00bbd0be629412ea8d3926f39da330e89933065214"))
 	if err != nil {
-		fmt.Println(err)
+		return
 	}
+	loginResponse.AccessToken = accessToken
+	loginResponse.TokenType = "Bearer"
+	return
 
-	fmt.Println(accessToken)
 }
 
 func ExtractTokenData(r *http.Request) (tokenData dto.TokenData, err error) {
