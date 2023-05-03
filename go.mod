@@ -5,6 +5,7 @@ go 1.20
 require (
 	github.com/go-chi/chi/v5 v5.0.8
 	github.com/go-playground/validator/v10 v10.13.0
+	github.com/golang-jwt/jwt/v4 v4.5.0
 	github.com/google/uuid v1.3.0
 	github.com/swaggo/http-swagger/v2 v2.0.1
 	github.com/swaggo/swag v1.16.1

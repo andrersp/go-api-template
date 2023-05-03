@@ -8,6 +8,12 @@ import (
 	"github.com/google/uuid"
 )
 
+var (
+	ErrUserNameEmpyt   = errors.New("userName cant be empty")
+	ErrInvalidEmail    = errors.New("invalid email")
+	ErrInvalidPassword = errors.New("character number less than 6")
+)
+
 type User struct {
 	ID       uuid.UUID `gorm:"primaryKey,index"`
 	UserName string    `gorm:"size:40;unique"`
@@ -18,15 +24,15 @@ type User struct {
 func (u *User) Validate() error {
 
 	if u.UserName == "" {
-		return errors.New("userName cant be empty")
+		return ErrUserNameEmpyt
 	}
 
 	if _, err := mail.ParseAddress(u.Email); err != nil {
-		return errors.New("invalid email")
+		return ErrInvalidEmail
 	}
 
 	if u.Password == "" || len(u.Password) < 6 {
-		return errors.New("character number less than 6")
+		return ErrInvalidPassword
 
 	}
 

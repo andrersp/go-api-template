@@ -3,13 +3,13 @@ package main
 import (
 	"log"
 
-	"github.com/andrersp/go-api-template/internal/adapters"
 	api "github.com/andrersp/go-api-template/internal/adapters/api"
 	repository "github.com/andrersp/go-api-template/internal/adapters/repository/postgres"
+	"github.com/andrersp/go-api-template/internal/config"
 )
 
 func init() {
-	adapters.SetConfig()
+	config.SetConfig()
 	err := repository.CreateSQLiteConn()
 	if err != nil {
 		log.Fatal(err)
@@ -21,6 +21,14 @@ func init() {
 	}
 
 }
+
+// func GenerateSecureToken(length int) string {
+// 	b := make([]byte, length)
+// 	if _, err := rand.Read(b); err != nil {
+// 		return ""
+// 	}
+// 	return hex.EncodeToString(b)
+// }
 
 // @title Swagger Example API
 // @version 1.0
@@ -39,6 +47,8 @@ func init() {
 
 // @BasePath /v1
 func main() {
+	// token := GenerateSecureToken(32)
+	// fmt.Println(token)
 
 	api.StartApiServer()
 

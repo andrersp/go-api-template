@@ -14,3 +14,12 @@ type UserRequest struct {
 	Password        string `json:"password" validate:"required,min=8,containsany=!@#?*$" example:"yourpassword!@#$"`
 	ConfirmPassword string `json:"confirmPassword" validate:"required,eqfield=Password"`
 }
+
+type LoginRequest struct {
+	UserName string `json:"userName" validate:"required" example:"username"`
+	Password string `json:"password" validate:"required" example:"mypassword"`
+}
+
+type TokenData struct {
+	UserID string `json:"id"`
+}

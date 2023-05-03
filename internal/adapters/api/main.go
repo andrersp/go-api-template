@@ -6,8 +6,8 @@ import (
 	"net/http"
 
 	_ "github.com/andrersp/go-api-template/docs"
-	"github.com/andrersp/go-api-template/internal/adapters"
 	"github.com/andrersp/go-api-template/internal/adapters/api/middlewares"
+	"github.com/andrersp/go-api-template/internal/config"
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
 	httpSwagger "github.com/swaggo/http-swagger/v2"
@@ -25,7 +25,7 @@ func StartApiServer() {
 		r.Route("/users", RoutersUser)
 	})
 
-	if err := http.ListenAndServe(fmt.Sprintf(":%s", adapters.API_PORT), r); err != nil {
+	if err := http.ListenAndServe(fmt.Sprintf(":%s", config.API_PORT), r); err != nil {
 		log.Fatal(err)
 
 	}

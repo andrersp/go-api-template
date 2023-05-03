@@ -7,6 +7,7 @@ import (
 	"github.com/andrersp/go-api-template/internal/core/dto"
 	"github.com/andrersp/go-api-template/internal/core/ports"
 	customvalidator "github.com/andrersp/go-api-template/internal/pkg/custom-validator"
+	secutiry "github.com/andrersp/go-api-template/internal/pkg/security"
 
 	"github.com/go-chi/chi/v5"
 	"github.com/google/uuid"
@@ -118,6 +119,8 @@ func (hu UserHandler) GetUser(w http.ResponseWriter, r *http.Request) {
 	userResponse.Email = user.Email
 	userResponse.UserName = user.UserName
 	userResponse.ID = user.ID
+
+	secutiry.CreateToken(user.ID)
 
 	helpers.Responder(200, w, userResponse)
 }
