@@ -7,16 +7,13 @@ import (
 )
 
 type UserSerice interface {
-	Create(dto.UserRequest) error
 	Get(uuid.UUID) (dto.UserResponse, error)
 	GetAll() []dto.UserResponse
 	Update(dto.UserRequest) error
 }
 
 type UserRepository interface {
-	Create(domain.User) error
 	Get(uuid.UUID) (domain.User, error)
 	GetAll() []domain.User
 	Update(domain.User) error
-	FindDuplicate(string, string) bool
 }

@@ -6,7 +6,6 @@ import (
 	"github.com/andrersp/go-api-template/internal/adapters/api/helpers"
 	"github.com/andrersp/go-api-template/internal/core/dto"
 	"github.com/andrersp/go-api-template/internal/core/ports"
-	customvalidator "github.com/andrersp/go-api-template/internal/pkg/custom-validator"
 
 	"github.com/go-chi/chi/v5"
 	"github.com/google/uuid"
@@ -21,45 +20,6 @@ func NewUserHandler(serviceUser ports.UserSerice) UserHandler {
 	return UserHandler{
 		serviceUser: serviceUser,
 	}
-}
-
-// CreateUser godoc
-// @Summary Create user
-// @Description Create a new user
-// @Tags Users
-// @Param payload body dto.UserRequest true "User payload"
-// @Success 201 {object} dto.SuccessResponse
-// @Failure 400 {object} dto.ErrorResponse
-// @Router /users [post]
-func (hu UserHandler) CreateUser(w http.ResponseWriter, r *http.Request) {
-
-	var user dto.UserRequest
-	errResponse := dto.ErrorResponse{Success: false}
-
-	if err := helpers.DecodeJsonBody(w, r, &user); err != nil {
-		errResponse.Msg = err.Error()
-		helpers.Responder(422, w, errResponse)
-		return
-	}
-
-	validator := customvalidator.Get()
-
-	if err := validator.Validate(user); err != nil {
-		errResponse.Msg = err.Error()
-		helpers.Responder(422, w, errResponse)
-		return
-
-	}
-
-	err := hu.serviceUser.Create(user)
-	if err != nil {
-		errResponse.Msg = err.Error()
-		helpers.Responder(422, w, errResponse)
-		return
-	}
-
-	helpers.Responder(201, w, nil)
-
 }
 
 // Users godoc

@@ -1,17 +1,10 @@
 package service
 
 import (
-	"errors"
-
-	"github.com/andrersp/go-api-template/internal/core/domain"
 	"github.com/andrersp/go-api-template/internal/core/dto"
 	"github.com/andrersp/go-api-template/internal/core/ports"
 
 	"github.com/google/uuid"
-)
-
-var (
-	ErrLogin = errors.New("error on userame or passwor")
 )
 
 type ServiceUserConfiguration func(us *UserService) error
@@ -42,29 +35,6 @@ func UserServiceWithRDB(repository ports.UserRepository) ServiceUserConfiguratio
 		return nil
 
 	}
-}
-
-func (us UserService) Create(userRequest dto.UserRequest) (err error) {
-
-	user := domain.User{
-		UserName: userRequest.UserName,
-		Email:    userRequest.Email,
-		Password: userRequest.Password,
-	}
-	if err := user.Validate(); err != nil {
-		return err
-	}
-
-	if ok := us.userRepo.FindDuplicate(user.UserName, user.Email); ok {
-		return errors.New("duplicate username or email")
-	}
-
-	err = us.userRepo.Create(user)
-	if err != nil {
-		return err
-	}
-
-	return
 }
 
 func (us UserService) Get(ID uuid.UUID) (userResponse dto.UserResponse, err error) {

@@ -30,30 +30,30 @@ func RoutersUser(r chi.Router) {
 
 	handlerUser := handlers.NewUserHandler(serviceUser)
 
-	r.Post("/", handlerUser.CreateUser)
 	r.Get("/", handlerUser.GetUsers)
 	r.Get("/{userID}", handlerUser.GetUser)
 
 }
 
-func RoutersLogin(r chi.Router) {
+func RoutersAccount(r chi.Router) {
 
 	connection, err := repository.ConnectDB()
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	repository := repository.NewLoginRepository(connection)
+	repository := repository.NewAccountRepository(connection)
 
-	loginService, err := service.NewLoginService(
-		service.LoginServiceWithRDB(repository),
+	accountService, err := service.NewAccountService(
+		service.AccountServiceWithRDB(repository),
 	)
 
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	handlerLogin := handlers.NewLoginHandler(loginService)
+	handlerAcount := handlers.NewAccountHandler(accountService)
 
-	r.Post("/", handlerLogin.Login)
+	r.Post("/create", handlerAcount.CreateUser)
+	r.Post("/login", handlerAcount.Login)
 }
