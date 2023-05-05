@@ -6,7 +6,6 @@ import (
 	"github.com/andrersp/go-api-template/internal/core/domain"
 	"github.com/andrersp/go-api-template/internal/core/dto"
 	"github.com/andrersp/go-api-template/internal/core/ports"
-	secutiry "github.com/andrersp/go-api-template/internal/pkg/security"
 
 	"github.com/google/uuid"
 )
@@ -21,7 +20,7 @@ type UserService struct {
 	userRepo ports.UserRepository
 }
 
-func NewUserService(cfgs ...ServiceUserConfiguration) (*UserService, error) {
+func NewUserService(cfgs ...ServiceUserConfiguration) (ports.UserSerice, error) {
 
 	us := &UserService{}
 
@@ -99,18 +98,4 @@ func (us UserService) GetAll() []dto.UserResponse {
 
 func (us *UserService) Update(userRequest dto.UserRequest) error {
 	return nil
-}
-
-func (us UserService) Login(userName, password string) (userResponse domain.User, err error) {
-	userResponse, err = us.userRepo.Login(userName)
-
-	if err != nil {
-		err = ErrLogin
-		return
-	}
-
-	if !secutiry.CheckPasswordHash(userResponse.Password, password) {
-		err = ErrLogin
-	}
-	return
 }

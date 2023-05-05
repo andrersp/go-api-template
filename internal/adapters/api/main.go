@@ -23,6 +23,7 @@ func StartApiServer() {
 		r.Use(middleware.Logger)
 		r.Use(middlewares.SetHeader("Content-Type", "application/json"))
 		r.Route("/users", RoutersUser)
+		r.Route("/login", RoutersLogin)
 	})
 
 	if err := http.ListenAndServe(fmt.Sprintf(":%s", config.API_PORT), r); err != nil {

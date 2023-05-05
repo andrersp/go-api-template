@@ -56,8 +56,3 @@ func (ru UserRepository) FindDuplicate(userName, email string) (exist bool) {
 	return err == nil
 
 }
-
-func (ru UserRepository) Login(userName string) (user domain.User, err error) {
-	err = ru.db.Where("user_name = ?", userName).First(&user).Error
-	return
-}

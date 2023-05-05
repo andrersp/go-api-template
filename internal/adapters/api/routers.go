@@ -3,7 +3,7 @@ package api
 import (
 	"log"
 
-	userHandler "github.com/andrersp/go-api-template/internal/adapters/api/handlers"
+	"github.com/andrersp/go-api-template/internal/adapters/api/handlers"
 
 	repository "github.com/andrersp/go-api-template/internal/adapters/repository/postgres"
 	"github.com/andrersp/go-api-template/internal/core/service"
@@ -28,10 +28,32 @@ func RoutersUser(r chi.Router) {
 		log.Fatal(err)
 	}
 
-	handlerUser := userHandler.NewUserHandler(serviceUser)
+	handlerUser := handlers.NewUserHandler(serviceUser)
 
 	r.Post("/", handlerUser.CreateUser)
 	r.Get("/", handlerUser.GetUsers)
 	r.Get("/{userID}", handlerUser.GetUser)
-	r.Post("/login", handlerUser.Login)
+
+}
+
+func RoutersLogin(r chi.Router) {
+
+	connection, err := repository.ConnectDB()
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	repository := repository.NewLoginRepository(connection)
+
+	loginService, err := service.NewLoginService(
+		service.LoginServiceWithRDB(repository),
+	)
+
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	handlerLogin := handlers.NewLoginHandler(loginService)
+
+	r.Post("/", handlerLogin.Login)
 }
