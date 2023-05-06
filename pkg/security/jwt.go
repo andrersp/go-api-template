@@ -1,6 +1,7 @@
-package helpers
+package secutiry
 
 import (
+	"context"
 	"errors"
 	"fmt"
 	"net/http"
@@ -8,22 +9,11 @@ import (
 	"time"
 
 	"github.com/andrersp/go-api-template/internal/config"
-	"github.com/andrersp/go-api-template/internal/core/dto"
 	"github.com/golang-jwt/jwt/v4"
 	"github.com/google/uuid"
 )
 
-var (
-	ErrUnauthorized = errors.New("UNAUTHORIZED")
-	ErrForbiden     = errors.New("FORBIDEN")
-)
-
-type jwtLoginClaims struct {
-	ID string `json:"id"`
-	jwt.RegisteredClaims
-}
-
-func CreateToken(ID uuid.UUID) (loginResponse dto.LoginResponse, err error) {
+func CreateToken(ID uuid.UUID) (accessToken string, err error) {
 
 	now := time.Now()
 	atClaims := jwtLoginClaims{
@@ -35,30 +25,39 @@ func CreateToken(ID uuid.UUID) (loginResponse dto.LoginResponse, err error) {
 		},
 	}
 	claims := jwt.NewWithClaims(jwt.SigningMethodHS256, atClaims)
-	accessToken, err := claims.SignedString([]byte(config.SECRET_TOKEN))
-	if err != nil {
-		return
-	}
-	loginResponse.AccessToken = accessToken
-	loginResponse.TokenType = "Bearer"
+	accessToken, err = claims.SignedString([]byte(config.SECRET_TOKEN))
 	return
+}
+
+func GetTokenData(ctx context.Context) (TokenData, error) {
+
+	contextValue := ctx.Value(TokenData{})
+
+	if contextValue == nil {
+		err := errors.New("context not found")
+
+		return TokenData{}, err
+	}
+
+	tokenData := contextValue.(TokenData)
+	return tokenData, nil
 
 }
 
-func ExtractTokenData(r *http.Request) (tokenData dto.TokenData, err error) {
+func ExtractTokenData(r *http.Request) (tokenData TokenData, err error) {
 
-	tokenString, err := ExtractTokenString(r)
+	tokenString, err := extractTokenString(r)
 
 	if err != nil {
 		return
 	}
 
-	token, err := VerifyToken(tokenString)
+	token, err := verifyToken(tokenString)
 	if err != nil {
 		return
 	}
 
-	if err = TokenValid(token); err != nil {
+	if err = tokenValid(token); err != nil {
 		return
 	}
 
@@ -75,7 +74,7 @@ func ExtractTokenData(r *http.Request) (tokenData dto.TokenData, err error) {
 
 }
 
-func ExtractTokenString(r *http.Request) (tokenString string, err error) {
+func extractTokenString(r *http.Request) (tokenString string, err error) {
 
 	if _, ok := r.Header["Authorization"]; !ok {
 		err = ErrUnauthorized
@@ -93,7 +92,7 @@ func ExtractTokenString(r *http.Request) (tokenString string, err error) {
 	return
 }
 
-func VerifyToken(tokenString string) (*jwt.Token, error) {
+func verifyToken(tokenString string) (*jwt.Token, error) {
 
 	token, err := jwt.Parse(tokenString, verifyTokenKey)
 	if err != nil {
@@ -112,7 +111,7 @@ func verifyTokenKey(token *jwt.Token) (interface{}, error) {
 
 }
 
-func TokenValid(token *jwt.Token) (err error) {
+func tokenValid(token *jwt.Token) (err error) {
 
 	if err != nil {
 		return err

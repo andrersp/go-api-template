@@ -1,7 +1,7 @@
 package service
 
 import (
-	"github.com/andrersp/go-api-template/internal/core/dto"
+	"github.com/andrersp/go-api-template/internal/core/domain"
 	"github.com/andrersp/go-api-template/internal/core/ports"
 
 	"github.com/google/uuid"
@@ -37,35 +37,20 @@ func UserServiceWithRDB(repository ports.UserRepository) ServiceUserConfiguratio
 	}
 }
 
-func (us UserService) Get(ID uuid.UUID) (userResponse dto.UserResponse, err error) {
+func (us UserService) Get(ID uuid.UUID) (user domain.User, err error) {
 
-	user, err := us.userRepo.Get(ID)
-	if err != nil {
-		return
-	}
+	user, err = us.userRepo.Get(ID)
 
-	userResponse.Email = user.Email
-	userResponse.UserName = user.UserName
-	userResponse.ID = user.ID
 	return
 
 }
 
-func (us UserService) GetAll() []dto.UserResponse {
+func (us UserService) GetAll() []domain.User {
 
-	usersResponde := make([]dto.UserResponse, 0)
-	for _, user := range us.userRepo.GetAll() {
-		usersResponde = append(usersResponde, dto.UserResponse{
-			UserName: user.UserName,
-			Email:    user.Email,
-			ID:       user.ID,
-		})
-	}
-
-	return usersResponde
+	return us.userRepo.GetAll()
 
 }
 
-func (us *UserService) Update(userRequest dto.UserRequest) error {
+func (us *UserService) Update(userName string) error {
 	return nil
 }

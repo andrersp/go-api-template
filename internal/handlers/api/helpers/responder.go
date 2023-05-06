@@ -6,7 +6,6 @@ import (
 )
 
 func Responder(status int, w http.ResponseWriter, payload interface{}) {
-
 	if status == 204 || payload == nil {
 		w.WriteHeader(status)
 		return

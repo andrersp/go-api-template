@@ -12,9 +12,13 @@ var (
 	once sync.Once
 )
 
-func Get() zerolog.Logger {
+func GetLogger() zerolog.Logger {
 	once.Do(func() {
-		log = zerolog.New(os.Stdout).With().Timestamp().Logger()
+		log = zerolog.New(os.Stdout).
+			Level(zerolog.InfoLevel).
+			With().
+			Timestamp().
+			Logger()
 	})
 	return log
 }

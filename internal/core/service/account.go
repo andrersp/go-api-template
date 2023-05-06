@@ -4,9 +4,8 @@ import (
 	"errors"
 
 	"github.com/andrersp/go-api-template/internal/core/domain"
-	"github.com/andrersp/go-api-template/internal/core/dto"
 	"github.com/andrersp/go-api-template/internal/core/ports"
-	secutiry "github.com/andrersp/go-api-template/internal/pkg/security"
+	secutiry "github.com/andrersp/go-api-template/pkg/security"
 )
 
 var (
@@ -40,14 +39,10 @@ func AccountServiceWithRDB(repository ports.AccountRepository) AccountServiceCon
 	}
 }
 
-func (as accountService) Create(userRequest dto.UserRequest) (err error) {
+func (as accountService) Create(userName, email, password string) (err error) {
 
-	user := domain.User{
-		UserName: userRequest.UserName,
-		Email:    userRequest.Email,
-		Password: userRequest.Password,
-	}
-	if err := user.Validate(); err != nil {
+	user, err := domain.NewUser(userName, email, password)
+	if err != nil {
 		return err
 	}
 

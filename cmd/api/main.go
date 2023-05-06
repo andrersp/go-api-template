@@ -3,9 +3,9 @@ package main
 import (
 	"log"
 
-	api "github.com/andrersp/go-api-template/internal/adapters/api"
-	repository "github.com/andrersp/go-api-template/internal/adapters/repository/postgres"
 	"github.com/andrersp/go-api-template/internal/config"
+	api "github.com/andrersp/go-api-template/internal/handlers/api"
+	repository "github.com/andrersp/go-api-template/internal/repository/postgres"
 )
 
 func init() {

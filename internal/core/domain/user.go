@@ -1,17 +1,17 @@
 package domain
 
 import (
-	"errors"
 	"net/mail"
 
-	secutiry "github.com/andrersp/go-api-template/internal/pkg/security"
+	apperrors "github.com/andrersp/go-api-template/pkg/app-errors"
+	secutiry "github.com/andrersp/go-api-template/pkg/security"
 	"github.com/google/uuid"
 )
 
 var (
-	ErrUserNameEmpyt   = errors.New("userName cant be empty")
-	ErrInvalidEmail    = errors.New("invalid email")
-	ErrInvalidPassword = errors.New("character number less than 6")
+	ErrUserNameEmpyt   = "userName cant be empty"
+	ErrInvalidEmail    = "invalid email"
+	ErrInvalidPassword = "character number less than 6"
 )
 
 type User struct {
@@ -21,26 +21,36 @@ type User struct {
 	Password string    `gorm:"size:200"`
 }
 
-func (u *User) Validate() error {
+func NewUser(userName, email, password string) (User, error) {
 
-	if u.UserName == "" {
-		return ErrUserNameEmpyt
+	user := User{}
+
+	if userName == "" {
+		err := apperrors.NewAppError("userName cant be empty")
+		return user, err
 	}
 
-	if _, err := mail.ParseAddress(u.Email); err != nil {
-		return ErrInvalidEmail
+	if _, err := mail.ParseAddress(email); err != nil {
+		err = apperrors.NewAppError("invalid email")
+		return user, err
 	}
 
-	if u.Password == "" || len(u.Password) < 6 {
-		return ErrInvalidPassword
+	if password == "" || len(password) < 6 {
+		err := apperrors.NewAppError("character number less than 6")
+		return user, err
 
 	}
 
-	if u.ID == uuid.Nil {
-		u.ID = uuid.New()
-	}
-	u.Password, _ = secutiry.GenerateHash(u.Password)
+	user.ID = uuid.New()
+	user.UserName = userName
+	user.Email = email
 
-	return nil
+	hashedPassword, err := secutiry.GenerateHash(password)
+	if err != nil {
+		err = apperrors.NewAppError("error on create hash password")
+	}
+	user.Password = hashedPassword
+
+	return user, nil
 
 }

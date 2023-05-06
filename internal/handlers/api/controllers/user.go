@@ -1,12 +1,12 @@
-package handlers
+package controllers
 
 import (
-	"fmt"
 	"net/http"
 
-	"github.com/andrersp/go-api-template/internal/adapters/api/helpers"
-	"github.com/andrersp/go-api-template/internal/core/dto"
 	"github.com/andrersp/go-api-template/internal/core/ports"
+	"github.com/andrersp/go-api-template/internal/handlers/api/controllers/schemas"
+	"github.com/andrersp/go-api-template/internal/handlers/api/helpers"
+	apperrors "github.com/andrersp/go-api-template/pkg/app-errors"
 
 	"github.com/go-chi/chi/v5"
 	"github.com/google/uuid"
@@ -28,20 +28,25 @@ func NewUserHandler(serviceUser ports.UserSerice) UserHandler {
 // @Description Get List of users
 // @Tags Users
 // @Security ApiKeyAuth
-// @Success 200 {array} dto.UserResponse
-// @Failure 400 {object} dto.ErrorResponse
+// @Success 200 {array} schemas.UserResponse
+// @Failure 400 {object} apperrors.AppError
 // @Router /users [get]
 func (hu UserHandler) GetUsers(w http.ResponseWriter, r *http.Request) {
 
-	tokenData := r.Context().Value("tokenData").(dto.TokenData)
-	fmt.Println(tokenData.UserID)
+	// tokenData, err := secutiry.GetTokenData(r.Context())
+	// if err != nil {
+	// 	err := apperrors.NewAppError(err.Error())
+	// 	helpers.Responder(500, w, err)
+	// 	return
 
-	response := make([]dto.UserResponse, 0)
+	// }
+
+	response := make([]schemas.UserResponse, 0)
 
 	users := hu.serviceUser.GetAll()
 
 	for _, user := range users {
-		response = append(response, dto.UserResponse{
+		response = append(response, schemas.UserResponse{
 			ID:       user.ID,
 			UserName: user.UserName,
 			Email:    user.Email,
@@ -55,28 +60,28 @@ func (hu UserHandler) GetUsers(w http.ResponseWriter, r *http.Request) {
 // @Summary Get User
 // @Description Get user by id
 // @Tags Users
+// @Security ApiKeyAuth
 // @Param userID path string true "User id" Format(uuid)
-// @Success 200 {object} dto.UserResponse
-// @Failure 400 {object} dto.ErrorResponse
+// @Success 200 {object} schemas.UserResponse
+// @Failure 400 {object} apperrors.AppError
 // @Router /users/{userID} [get]
 func (hu UserHandler) GetUser(w http.ResponseWriter, r *http.Request) {
 	paramID := chi.URLParam(r, "userID")
 
-	errResponse := dto.ErrorResponse{Success: false}
-	userResponse := dto.UserResponse{}
+	userResponse := schemas.UserResponse{}
 
 	userID, err := uuid.Parse(paramID)
 	if err != nil {
-		errResponse.Msg = err.Error()
-		helpers.Responder(400, w, errResponse)
+		err := apperrors.NewAppError(err.Error())
+		helpers.Responder(400, w, err)
 		return
 	}
 
 	user, err := hu.serviceUser.Get(userID)
 
 	if err != nil {
-		errResponse.Msg = err.Error()
-		helpers.Responder(400, w, errResponse)
+		err := apperrors.NewAppError(err.Error())
+		helpers.Responder(400, w, err)
 		return
 
 	}
