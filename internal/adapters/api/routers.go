@@ -4,6 +4,7 @@ import (
 	"log"
 
 	"github.com/andrersp/go-api-template/internal/adapters/api/handlers"
+	"github.com/andrersp/go-api-template/internal/adapters/api/middlewares"
 
 	repository "github.com/andrersp/go-api-template/internal/adapters/repository/postgres"
 	"github.com/andrersp/go-api-template/internal/core/service"
@@ -12,6 +13,8 @@ import (
 )
 
 func RoutersUser(r chi.Router) {
+
+	r.Use(middlewares.JwtMiddleware())
 
 	connection, err := repository.ConnectDB()
 	if err != nil {

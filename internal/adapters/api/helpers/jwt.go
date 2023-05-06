@@ -35,7 +35,7 @@ func CreateToken(ID uuid.UUID) (loginResponse dto.LoginResponse, err error) {
 		},
 	}
 	claims := jwt.NewWithClaims(jwt.SigningMethodHS256, atClaims)
-	accessToken, err := claims.SignedString([]byte("4a031514c89b259aaad22c00bbd0be629412ea8d3926f39da330e89933065214"))
+	accessToken, err := claims.SignedString([]byte(config.SECRET_TOKEN))
 	if err != nil {
 		return
 	}

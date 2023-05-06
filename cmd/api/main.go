@@ -38,6 +38,10 @@ func init() {
 // @Accept json
 // Produce json
 
+// @securityDefinitions.apikey  ApiKeyAuth
+// @in header
+// @name Authorization
+
 // @contact.name API Support
 // @contact.url http://www.swagger.io/support
 // @contact.email support@swagger.io

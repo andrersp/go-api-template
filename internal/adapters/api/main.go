@@ -19,11 +19,11 @@ func StartApiServer() {
 	r.Get("/docs/*", httpSwagger.Handler())
 
 	r.Route("/v1", func(r chi.Router) {
-
-		r.Use(middleware.Logger)
 		r.Use(middlewares.SetHeader("Content-Type", "application/json"))
-		r.Route("/users", RoutersUser)
+		r.Use(middleware.Logger)
 		r.Route("/account", RoutersAccount)
+		r.Route("/users", RoutersUser)
+
 	})
 
 	if err := http.ListenAndServe(fmt.Sprintf(":%s", config.API_PORT), r); err != nil {

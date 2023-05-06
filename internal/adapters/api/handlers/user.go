@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"fmt"
 	"net/http"
 
 	"github.com/andrersp/go-api-template/internal/adapters/api/helpers"
@@ -26,10 +27,14 @@ func NewUserHandler(serviceUser ports.UserSerice) UserHandler {
 // @Summary Get Users
 // @Description Get List of users
 // @Tags Users
+// @Security ApiKeyAuth
 // @Success 200 {array} dto.UserResponse
 // @Failure 400 {object} dto.ErrorResponse
 // @Router /users [get]
 func (hu UserHandler) GetUsers(w http.ResponseWriter, r *http.Request) {
+
+	tokenData := r.Context().Value("tokenData").(dto.TokenData)
+	fmt.Println(tokenData.UserID)
 
 	response := make([]dto.UserResponse, 0)
 
