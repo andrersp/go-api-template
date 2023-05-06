@@ -25,6 +25,7 @@ func CreateToken(ID uuid.UUID) (accessToken string, err error) {
 		},
 	}
 	claims := jwt.NewWithClaims(jwt.SigningMethodHS256, atClaims)
+
 	accessToken, err = claims.SignedString([]byte(config.SECRET_TOKEN))
 	return
 }
@@ -106,6 +107,7 @@ func verifyTokenKey(token *jwt.Token) (interface{}, error) {
 	if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
 		return nil, ErrUnauthorized
 	}
+	fmt.Println(config.SECRET_TOKEN)
 
 	return []byte(config.SECRET_TOKEN), nil
 
