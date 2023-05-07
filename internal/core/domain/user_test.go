@@ -3,7 +3,6 @@ package domain
 import (
 	"testing"
 
-	apperrors "github.com/andrersp/go-api-template/pkg/app-errors"
 	"gopkg.in/go-playground/assert.v1"
 )
 
@@ -28,21 +27,21 @@ func TestUser(t *testing.T) {
 			UserName:      "",
 			Email:         "myemail@mail.com",
 			Password:      "MyPassword!@#",
-			ExpectedError: &apperrors.AppError{Msg: "userName cant be empty"},
+			ExpectedError: ErrUserNameEmpyt,
 		},
 		{
 			Name:          "ErrorEmail",
 			UserName:      "myusername",
 			Email:         "myemail.com",
 			Password:      "MyPassword!@#",
-			ExpectedError: &apperrors.AppError{Msg: "invalid email"},
+			ExpectedError: ErrInvalidEmail,
 		},
 		{
 			Name:          "ErrorEmailMin",
 			UserName:      "myusername",
 			Email:         "myemail@mail.com",
 			Password:      "12344",
-			ExpectedError: &apperrors.AppError{Msg: "character number less than 6"},
+			ExpectedError: ErrInvalidPassword,
 		},
 	}
 

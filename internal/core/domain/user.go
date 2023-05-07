@@ -1,17 +1,17 @@
 package domain
 
 import (
+	"errors"
 	"net/mail"
 
-	apperrors "github.com/andrersp/go-api-template/pkg/app-errors"
 	secutiry "github.com/andrersp/go-api-template/pkg/security"
 	"github.com/google/uuid"
 )
 
 var (
-	ErrUserNameEmpyt   = "userName cant be empty"
-	ErrInvalidEmail    = "invalid email"
-	ErrInvalidPassword = "character number less than 6"
+	ErrUserNameEmpyt   = errors.New("userName cant be empty")
+	ErrInvalidEmail    = errors.New("invalid email")
+	ErrInvalidPassword = errors.New("character number less than 6")
 )
 
 type User struct {
@@ -26,18 +26,15 @@ func NewUser(userName, email, password string) (User, error) {
 	user := User{}
 
 	if userName == "" {
-		err := apperrors.NewAppError("userName cant be empty")
-		return user, err
+		return user, ErrUserNameEmpyt
 	}
 
 	if _, err := mail.ParseAddress(email); err != nil {
-		err = apperrors.NewAppError("invalid email")
-		return user, err
+		return user, ErrInvalidEmail
 	}
 
 	if password == "" || len(password) < 6 {
-		err := apperrors.NewAppError("character number less than 6")
-		return user, err
+		return user, ErrInvalidPassword
 
 	}
 
@@ -45,11 +42,7 @@ func NewUser(userName, email, password string) (User, error) {
 	user.UserName = userName
 	user.Email = email
 
-	hashedPassword, err := secutiry.GenerateHash(password)
-	if err != nil {
-		err = apperrors.NewAppError("error on create hash password")
-	}
-	user.Password = hashedPassword
+	user.Password, _ = secutiry.GenerateHash(password)
 
 	return user, nil
 

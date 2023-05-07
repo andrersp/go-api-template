@@ -43,7 +43,7 @@ func (as accountService) Create(userName, email, password string) (err error) {
 
 	user, err := domain.NewUser(userName, email, password)
 	if err != nil {
-		return err
+		return
 	}
 
 	if ok := as.accountRepo.FindDuplicate(user.UserName, user.Email); ok {

@@ -85,12 +85,16 @@ func (hl accountHandler) Login(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	loginResponse, err := secutiry.CreateToken(userResponse.ID)
+	token, err := secutiry.CreateToken(userResponse.ID)
 
 	if err != nil {
 		err := apperrors.NewAppError(err.Error())
 		helpers.Responder(500, w, err)
 		return
+	}
+	loginResponse := schemas.LoginResponse{
+		AccessToken: token,
+		TokenType:   "Bearer",
 	}
 
 	helpers.Responder(200, w, loginResponse)
