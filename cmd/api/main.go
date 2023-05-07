@@ -5,17 +5,17 @@ import (
 
 	"github.com/andrersp/go-api-template/internal/config"
 	api "github.com/andrersp/go-api-template/internal/handlers/api"
-	repository "github.com/andrersp/go-api-template/internal/repository/postgres"
+	database "github.com/andrersp/go-api-template/internal/repository/database"
 )
 
 func init() {
 	config.SetConfig()
-	err := repository.CreateSQLiteConn()
+	err := database.CreateSQLiteConn()
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	err = repository.AutoMigrate()
+	err = database.AutoMigrate()
 	if err != nil {
 		log.Fatal()
 	}

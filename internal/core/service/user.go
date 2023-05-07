@@ -1,10 +1,17 @@
 package service
 
 import (
+	"errors"
+
 	"github.com/andrersp/go-api-template/internal/core/domain"
 	"github.com/andrersp/go-api-template/internal/core/ports"
+	secutiry "github.com/andrersp/go-api-template/pkg/security"
 
 	"github.com/google/uuid"
+)
+
+var (
+	ErrLogin = errors.New("error on username or password")
 )
 
 type ServiceUserConfiguration func(us *UserService) error
@@ -53,4 +60,38 @@ func (us UserService) GetAll() []domain.User {
 
 func (us *UserService) Update(userName string) error {
 	return nil
+}
+
+func (us UserService) Create(userName, email, password string) (err error) {
+
+	user, err := domain.NewUser(userName, email, password)
+	if err != nil {
+		return
+	}
+
+	if ok := us.userRepo.FindDuplicate(user.UserName, user.Email); ok {
+		return errors.New("duplicate username or email")
+	}
+
+	err = us.userRepo.Create(user)
+	if err != nil {
+		return err
+	}
+
+	return
+}
+
+func (us UserService) Login(userName, password string) (userResponse domain.User, err error) {
+
+	userResponse, err = us.userRepo.Login(userName)
+
+	if err != nil {
+		err = ErrLogin
+		return
+	}
+
+	if !secutiry.CheckPasswordHash(userResponse.Password, password) {
+		err = ErrLogin
+	}
+	return
 }

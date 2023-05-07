@@ -7,7 +7,7 @@ import (
 	"github.com/andrersp/go-api-template/internal/handlers/api/middlewares"
 
 	"github.com/andrersp/go-api-template/internal/core/service"
-	repository "github.com/andrersp/go-api-template/internal/repository/postgres"
+	database "github.com/andrersp/go-api-template/internal/repository/database"
 
 	"github.com/go-chi/chi/v5"
 )
@@ -16,12 +16,12 @@ func RoutersUser(r chi.Router) {
 
 	r.Use(middlewares.JwtMiddleware())
 
-	connection, err := repository.ConnectDB()
+	connection, err := database.ConnectDB()
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	repository := repository.NewUserRepository(connection)
+	repository := database.NewUserRepository(connection)
 
 	serviceUser, err := service.NewUserService(
 		service.UserServiceWithRDB(repository),
@@ -40,15 +40,15 @@ func RoutersUser(r chi.Router) {
 
 func RoutersAccount(r chi.Router) {
 
-	connection, err := repository.ConnectDB()
+	connection, err := database.ConnectDB()
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	repository := repository.NewAccountRepository(connection)
+	repository := database.NewUserRepository(connection)
 
-	accountService, err := service.NewAccountService(
-		service.AccountServiceWithRDB(repository),
+	accountService, err := service.NewUserService(
+		service.UserServiceWithRDB(repository),
 	)
 
 	if err != nil {

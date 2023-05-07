@@ -13,13 +13,13 @@ import (
 )
 
 type accountHandler struct {
-	accountService ports.AccountService
+	userService ports.UserSerice
 }
 
-func NewAccountHandler(accountService ports.AccountService) accountHandler {
+func NewAccountHandler(userService ports.UserSerice) accountHandler {
 
 	return accountHandler{
-		accountService: accountService,
+		userService: userService,
 	}
 }
 
@@ -50,7 +50,7 @@ func (ah accountHandler) CreateUser(w http.ResponseWriter, r *http.Request) {
 
 	}
 
-	err := ah.accountService.Create(user.UserName, user.Email, user.Password)
+	err := ah.userService.Create(user.UserName, user.Email, user.Password)
 	if err != nil {
 		err := apperrors.NewAppError(err.Error())
 		helpers.Responder(422, w, err)
@@ -78,7 +78,7 @@ func (hl accountHandler) Login(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	userResponse, err := hl.accountService.Login(payload.UserName, payload.Password)
+	userResponse, err := hl.userService.Login(payload.UserName, payload.Password)
 	if err != nil {
 		err := apperrors.NewAppError(err.Error())
 		helpers.Responder(422, w, err)
