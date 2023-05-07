@@ -8,19 +8,20 @@ import (
 )
 
 var (
-	ENVIROMMENT  string
+	ENVIRONMENT  string
 	API_PORT     string
 	SECRET_TOKEN string
 )
 
 func SetConfig() {
-	API_PORT = os.Getenv("API_PORT")
-	ENVIROMMENT = os.Getenv("ENVIROMMENT")
+
+	ENVIRONMENT = os.Getenv("ENVIRONMENT")
 
 	err := godotenv.Load()
-
-	if err != nil && ENVIROMMENT == "LOCAL" {
+	if err != nil && ENVIRONMENT == "LOCAL" {
 		log.Fatal(err)
 	}
+
+	API_PORT = os.Getenv("API_PORT")
 	SECRET_TOKEN = os.Getenv("SECRET_TOKEN")
 }
