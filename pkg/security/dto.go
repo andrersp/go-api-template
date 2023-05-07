@@ -4,6 +4,7 @@ import (
 	"errors"
 
 	"github.com/golang-jwt/jwt/v4"
+	"github.com/google/uuid"
 )
 
 var (
@@ -12,10 +13,10 @@ var (
 )
 
 type jwtLoginClaims struct {
-	ID string `json:"id"`
+	ID uuid.UUID `json:"id"`
 	jwt.RegisteredClaims
 }
 
 type TokenData struct {
-	UserID string `json:"id"`
+	UserID uuid.UUID `json:"id"`
 }

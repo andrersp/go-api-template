@@ -1,12 +1,14 @@
 package controllers
 
 import (
+	"fmt"
 	"net/http"
 
 	"github.com/andrersp/go-api-template/internal/core/ports"
 	"github.com/andrersp/go-api-template/internal/handlers/api/controllers/schemas"
 	"github.com/andrersp/go-api-template/internal/handlers/api/helpers"
 	apperrors "github.com/andrersp/go-api-template/pkg/app-errors"
+	secutiry "github.com/andrersp/go-api-template/pkg/security"
 
 	"github.com/go-chi/chi/v5"
 	"github.com/google/uuid"
@@ -33,13 +35,15 @@ func NewUserHandler(serviceUser ports.UserSerice) UserHandler {
 // @Router /users [get]
 func (hu UserHandler) GetUsers(w http.ResponseWriter, r *http.Request) {
 
-	// tokenData, err := secutiry.GetTokenData(r.Context())
-	// if err != nil {
-	// 	err := apperrors.NewAppError(err.Error())
-	// 	helpers.Responder(500, w, err)
-	// 	return
+	tokenData, err := secutiry.GetTokenData(r.Context())
+	if err != nil {
+		err := apperrors.NewAppError(err.Error())
+		helpers.Responder(500, w, err)
+		return
 
-	// }
+	}
+
+	fmt.Println(tokenData.UserID)
 
 	response := make([]schemas.UserResponse, 0)
 

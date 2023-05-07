@@ -17,7 +17,7 @@ func CreateToken(ID uuid.UUID) (accessToken string, err error) {
 
 	now := time.Now()
 	atClaims := jwtLoginClaims{
-		ID: ID.String(),
+		ID: ID,
 		RegisteredClaims: jwt.RegisteredClaims{
 			ExpiresAt: jwt.NewNumericDate(now.Add(time.Hour * 24)),
 			Subject:   "Sub",
@@ -65,7 +65,7 @@ func ExtractTokenData(r *http.Request) (tokenData TokenData, err error) {
 	if claims, ok := token.Claims.(jwt.MapClaims); ok && token.Valid {
 		claimsID := fmt.Sprintf("%s", claims["id"])
 
-		tokenData.UserID = claimsID
+		tokenData.UserID = uuid.MustParse(claimsID)
 
 	} else {
 		err = ErrForbiden
